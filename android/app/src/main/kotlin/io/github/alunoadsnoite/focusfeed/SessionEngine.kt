@@ -1,4 +1,4 @@
-package com.example.focus_feed
+package io.github.alunoadsnoite.focusfeed
 
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -75,7 +75,7 @@ object SessionEngine {
                     p.rewardSeconds += earned
                     val day = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date(s.deadlineWall))
                     p.focusByDay[day] = (p.focusByDay[day] ?: 0) + s.focusTotalSeconds
-                    p.events.add(SessionEvent("focus-${s.id}", "Foco concluído! Você ganhou ${label(earned)}."))
+                    p.events.add(SessionEvent("focus-${s.id}", "Foco concluído!", "Foco concluído! Você ganhou ${label(earned)}."))
                 }
                 s.phase = "idle"
                 s.deadlineElapsed = 0

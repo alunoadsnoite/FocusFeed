@@ -12,7 +12,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.focus_feed"
+    namespace = "io.github.alunoadsnoite.focusfeed"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -22,7 +22,6 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "io.github.alunoadsnoite.focusfeed"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // You can update the following values to match your application needs.
@@ -51,8 +50,6 @@ android {
             versionNameSuffix = "-debug"
         }
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = if (!unsignedBuild && releaseKeysFile.exists()) signingConfigs.getByName("release") else null
             if (!releaseKeysFile.exists() && !unsignedBuild && gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) }) {
                 throw GradleException("Configure .private/key.properties ou FOCUSFEED_UNSIGNED=1 para builds F-Droid.")

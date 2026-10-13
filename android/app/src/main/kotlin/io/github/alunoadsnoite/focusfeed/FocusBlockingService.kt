@@ -1,4 +1,4 @@
-package com.example.focus_feed
+package io.github.alunoadsnoite.focusfeed
 
 import android.app.Service
 import android.app.KeyguardManager

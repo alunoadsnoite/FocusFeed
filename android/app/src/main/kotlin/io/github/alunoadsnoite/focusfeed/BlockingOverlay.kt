@@ -1,4 +1,4 @@
-package com.example.focus_feed
+package io.github.alunoadsnoite.focusfeed
 
 import android.content.Context
 import android.content.Intent
