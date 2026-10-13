@@ -139,7 +139,7 @@ enum SessionCore {
           let formatter = DateFormatter(); formatter.dateFormat = "yyyy-MM-dd"; formatter.locale = Locale(identifier: "en_US_POSIX")
           let day = formatter.string(from: Date(timeIntervalSince1970: Double(p.session.deadlineWall) / 1000))
           p.focusByDay[day, default: 0] += p.session.focusTotalSeconds
-          p.events.append(FocusEvent(id: "focus-\(p.session.id)", title: "Foco concluído!", message: "Foco concluído! You earned \(label(earned))."))
+          p.events.append(FocusEvent(id: "focus-\(p.session.id)", title: "Foco concluído!", message: "Foco concluído! Você ganhou \(label(earned))"))
         }
         p.session.phase = "idle"; p.session.deadlineElapsed = 0; p.session.deadlineWall = 0
         p.notice = "Foco concluído. Recompensa adicionada ao saldo."

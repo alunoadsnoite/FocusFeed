@@ -33,6 +33,7 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
   late final SessionController _controller;
   int? _rewardChoice;
   String _search = '';
+  final _searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -55,6 +56,7 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _controller.removeListener(_changed);
+    _searchController.dispose();
     if (widget.controller == null) _controller.dispose();
     super.dispose();
   }
@@ -305,6 +307,8 @@ class _FocusScreenState extends State<FocusScreen> with WidgetsBindingObserver {
                   ),
                 ] else ...[
                   TextField(
+                    key: const Key('appSearch'),
+                    controller: _searchController,
                     decoration: const InputDecoration(
                       labelText: 'Buscar apps instalados',
                       prefixIcon: Icon(Icons.search),

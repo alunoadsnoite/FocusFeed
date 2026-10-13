@@ -1,6 +1,7 @@
 package com.example.focus_feed
 
 import android.app.NotificationManager
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.content.Intent
 import android.os.SystemClock
@@ -40,6 +41,9 @@ class NativeFlowTest {
         }
         instrumentation.startActivitySync(Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         instrumentation.waitForIdleSync()
+        instrumentation.uiAutomation.serviceInfo = instrumentation.uiAutomation.serviceInfo.apply {
+            flags = flags or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+        }
         Thread.sleep(300)
     }
     @After fun cleanup() {
@@ -72,6 +76,9 @@ class NativeFlowTest {
         focus(60)
         context.startActivity(Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         waitFor { BlockingOverlay.visible }
+        waitFor { instrumentation.uiAutomation.windows.any { window ->
+            window.root?.findAccessibilityNodeInfosByText("Você está em momento de foco!")?.isNotEmpty() == true
+        } }
         Assert.assertEquals(0L, worker { NativeSessionRepository.load(context).rewardSeconds })
     }
     @Test fun rewardExpiresAndReblocksWithoutFlutterCallback() {

@@ -42,6 +42,13 @@ class MainActivity : FlutterActivity() {
                 if (call.method == "requestNotifications") {
                     if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                         if (notificationResult != null) { result.error("busy", "Solicitação já aberta.", null); return@setMethodCallHandler }
+                        val options = getSharedPreferences("focusfeed_options", MODE_PRIVATE)
+                        if (options.getBoolean("notifications_asked", false) && !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                            startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName))
+                            result.success(false)
+                            return@setMethodCallHandler
+                        }
+                        options.edit().putBoolean("notifications_asked", true).apply()
                         notificationResult = result
                         requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 41)
                     } else result.success(FocusNotifications.enabled(this))
