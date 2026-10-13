@@ -1,9 +1,13 @@
-image: ghcr.io/cirruslabs/flutter:3.47.7
+image: ghcr.io/cirruslabs/flutter:stable
 stages:
   - test
 variables:
   FOCUSFEED_UNSIGNED: '1'
   PUB_CACHE: '$CI_PROJECT_DIR/.pub-cache'
+before_script:
+  - git clone --depth 1 --branch 3.47.7 https://github.com/flutter/flutter.git /tmp/focusfeed-flutter
+  - test "$(git -C /tmp/focusfeed-flutter rev-parse HEAD)" = "abaf9c523780a608bd46686fd5e53740a07077f8"
+  - export PATH="/tmp/focusfeed-flutter/bin:$PATH"
 cache:
   paths:
     - .pub-cache/
