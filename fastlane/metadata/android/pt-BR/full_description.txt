@@ -1,0 +1,7 @@
+Transforme sessões de foco em pausas conquistadas.
+
+Escolha apps instalados para bloquear, inicie um Pomodoro e ganhe 20% do tempo de foco concluído como saldo de recompensa. Use o saldo para liberar as redes temporariamente. Ao terminar a pausa, o bloqueio volta automaticamente.
+
+Timer configurável, pausa, retomada, seleção de apps com ícones e busca, histórico diário e notificações locais. Sem conta, anúncios, rastreamento ou servidor: o progresso fica no aparelho.
+
+O bloqueio usa acesso ao uso dos apps e sobreposição. Acessibilidade não é necessária e notificações são opcionais. Após reinício ou interrupção, o foco volta pausado, sem crédito pelo tempo desligado. Restrições do Android e de fabricantes podem interromper o monitor. O usuário pode parar o bloqueio a qualquer momento.

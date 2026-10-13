@@ -1,0 +1,1 @@
+Initial MVP: Pomodoro, native app blocking, 20% earned breaks, local progress, session recovery, installed-app selection and local notifications.

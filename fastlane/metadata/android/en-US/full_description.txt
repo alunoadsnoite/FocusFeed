@@ -1,0 +1,17 @@
+FocusFeed helps you focus and turn completed work into earned breaks.
+
+Choose installed apps to block, start a configurable Pomodoro, and earn 20% of completed focus time as a break balance. Spend that balance to temporarily release selected apps. Blocking resumes automatically when the break ends.
+
+Features:
+• Configurable focus timer, pause, resume and stop
+• Installed-app selection with icons and search
+• Native foreground monitor and blocking overlay
+• Local balance and daily completed-focus history
+• Session restoration and protection-status feedback
+• Completion and break-expiry notifications
+
+No account, advertisements, analytics or backend. All progress stays on your device.
+
+Usage access and draw-over-other-apps access are needed for blocking. Notification permission is optional. Accessibility access is not required.
+
+After a reboot or interruption, unfinished focus is restored paused without awarding credit for downtime. Android may restrict or stop background monitoring, and certain apps can hide overlays. This is a voluntary focus aid, not an unbreakable parental-control system.

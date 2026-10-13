@@ -1,0 +1,22 @@
+image: ghcr.io/cirruslabs/flutter:3.47.7
+stages:
+  - test
+variables:
+  FOCUSFEED_UNSIGNED: '1'
+  PUB_CACHE: '$CI_PROJECT_DIR/.pub-cache'
+cache:
+  paths:
+    - .pub-cache/
+checks:
+  stage: test
+  script:
+    - flutter pub get --enforce-lockfile
+    - flutter analyze
+    - flutter test
+    - flutter build apk --debug
+    - cd android && ./gradlew :app:testDebugUnitTest && cd ..
+    - flutter build apk --release
+  artifacts:
+    paths:
+      - build/app/outputs/flutter-apk/app-release.apk
+    expire_in: 14 days
