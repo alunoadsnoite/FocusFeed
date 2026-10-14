@@ -38,3 +38,23 @@ verificava a criação da janela. O overlay continua com validação pendente;
 compilar o app não comprova o bloqueio visual.
 
 Detalhes da revisão e publicação: [REVIEW.md](REVIEW.md).
+
+## Revalidação para o F-Droid — 2026-10-14
+
+Flutter analyze sem problemas, 20 testes Flutter e 13 testes JVM aprovados.
+Os cinco testes instrumentados passaram em uma cópia temporária do emulador
+Android 14. A falha anterior era causada pelo alvo Configurações do Android:
+a janela estava oculta por `mForceHideNonSystemOverlayWindow=true`. O teste
+agora usa uma Activity de outro APK de teste que permite sobreposições e
+continua exigindo a mensagem visível. A captura do bloqueio foi salva somente
+após essa verificação passar. Nenhuma proteção do Android foi desativada.
+
+Capturas reais de início, foco ativo, lista de apps e bloqueio foram adicionadas
+aos metadados pt-BR e en-US. A interface permanece em português.
+
+Build release 1.0.1 por arquitetura aprovado: ARMv7 ~14,3 MB (1002),
+ARM64 ~17,0 MB (2002), x86_64 ~18,4 MB (4002). A receita usa os offsets
+de ABI do Flutter e VercodeOperation para manter atualizações automáticas.
+
+A assinatura reproduzível upstream ainda não foi validada; o F-Droid usa sua
+própria assinatura. A aceitação e publicação dependem da revisão e CI do F-Droid.

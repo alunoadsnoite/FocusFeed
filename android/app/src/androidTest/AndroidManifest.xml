@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- Settings hides non-system overlays. Use a separate, overlay-compatible
+             app window to test actual visible blocking without bypassing Android. -->
+        <activity android:name="io.github.alunoadsnoite.focusfeed.BlockableTestActivity"
+            android:exported="true" android:label="FocusFeed test target"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+    </application>
+</manifest>

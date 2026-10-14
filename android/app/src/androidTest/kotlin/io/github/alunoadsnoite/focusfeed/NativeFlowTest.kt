@@ -4,8 +4,10 @@ import android.app.NotificationManager
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import java.io.File
+import java.io.FileOutputStream
 import android.os.SystemClock
-import android.provider.Settings
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.*
@@ -52,10 +54,15 @@ class NativeFlowTest {
         context.stopService(Intent(context, FocusBlockingService::class.java))
         waitFor { !FocusBlockingService.running }
     }
+    private val blockablePackage get() = instrumentation.context.packageName
+    private fun openBlockableApp() {
+        context.startActivity(Intent().setClassName(blockablePackage, BlockableTestActivity::class.java.name)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    }
     private fun focus(seconds: Long) {
         worker {
             val p = NativeSessionRepository.load(context)
-            p.apps["com.android.settings"] = true
+            p.apps[blockablePackage] = true
             SessionEngine.start(p, seconds, SystemClock.elapsedRealtime(), System.currentTimeMillis(), NativeSessionRepository.boot(context))
             NativeSessionRepository.save(context, p)
         }
@@ -74,23 +81,30 @@ class NativeFlowTest {
     }
     @Test fun zeroBalanceStillShowsOverlayForSelectedApp() {
         focus(60)
-        context.startActivity(Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        openBlockableApp()
         waitFor { BlockingOverlay.visible }
         waitFor { instrumentation.uiAutomation.windows.any { window ->
             window.root?.findAccessibilityNodeInfosByText("Você está em momento de foco!")?.isNotEmpty() == true
         } }
         Assert.assertEquals(0L, worker { NativeSessionRepository.load(context).rewardSeconds })
+        if (InstrumentationRegistry.getArguments().getString("captureScreenshots") == "true") {
+            val screenshot = requireNotNull(instrumentation.uiAutomation.takeScreenshot())
+            FileOutputStream(File(context.cacheDir, "focusfeed-blocking.png")).use {
+                Assert.assertTrue(screenshot.compress(Bitmap.CompressFormat.PNG, 100, it))
+            }
+            screenshot.recycle()
+        }
     }
     @Test fun rewardExpiresAndReblocksWithoutFlutterCallback() {
         worker {
             val p = NativeSessionRepository.load(context)
-            p.rewardSeconds = 2; p.apps["com.android.settings"] = true
+            p.rewardSeconds = 2; p.apps[blockablePackage] = true
             SessionEngine.reward(p, 2, SystemClock.elapsedRealtime(), System.currentTimeMillis(), NativeSessionRepository.boot(context))
             NativeSessionRepository.save(context, p)
         }
         context.startForegroundService(Intent(context, FocusBlockingService::class.java))
         waitFor { FocusBlockingService.running }
-        context.startActivity(Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        openBlockableApp()
         Assert.assertFalse(BlockingOverlay.visible)
         waitFor { BlockingOverlay.visible }
         Assert.assertEquals("locked", worker { NativeSessionRepository.load(context).session.phase })

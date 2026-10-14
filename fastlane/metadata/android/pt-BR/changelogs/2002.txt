@@ -1,0 +1,1 @@
+Capturas reais para o F-Droid e validação do bloqueio com um aplicativo de teste que permite sobreposições. Distribuição Android por arquitetura para reduzir o download.

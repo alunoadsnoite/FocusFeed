@@ -46,3 +46,12 @@ A proposta continua aberta e depende da revisão dos mantenedores. A tag
 v1.0.0 aponta para 85ad306; a mudança posterior de receita não altera o
 comportamento do APK dessa tag. Não há release GitHub com APK anexado.
 Nenhuma tag foi movida e nenhuma nova versão do aplicativo foi criada nesta revisão.
+
+## Atualização de 2026-10-14
+
+A pendência 1 foi diagnosticada e resolvida no teste: Configurações do Android
+oculta overlays por segurança. Os cinco cenários passaram usando um APK de
+teste compatível; a mensagem foi verificada e capturada. Veja VALIDATION.md.
+O helper de taxa variável continua sem integração; o produto anuncia somente
+a taxa fixa de 20%, usada pelos motores nativos. A validação iOS em aparelho
+continua pendente e não faz parte do pacote Android submetido ao F-Droid.

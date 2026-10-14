@@ -1,0 +1,1 @@
+Add real F-Droid screenshots and validate blocking against an overlay-compatible test app. Provide architecture-specific Android builds to reduce download size.
