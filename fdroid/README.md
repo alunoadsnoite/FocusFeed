@@ -1,13 +1,16 @@
 # Proposta para o catálogo oficial F-Droid
 
-A receita io.github.alunoadsnoite.focusfeed.yml segue o template Flutter oficial,
-usa o SDK upstream 3.47.7, respeita pubspec.lock e não inclui material de assinatura.
-O F-Droid deverá construir e assinar o APK com a infraestrutura própria.
+A receita `io.github.alunoadsnoite.focusfeed.yml` prepara a versão 1.0.1 com três
+builds separados: ARMv7 (1002), ARM64 (2002), x86_64 (4002). O código do Flutter
+é fixado pela revisão `.metadata`; a receita respeita `pubspec.lock` e não inclui
+material de assinatura. O F-Droid constrói e assina os APKs após revisão.
 
-Licença MIT. Não há serviços proprietários, SDK de analytics, anúncios ou backend.
-A permissão de Internet existe só nos manifests de debug/profile do Flutter;
-o release não a declara. Uso de apps é consultado localmente para o overlay.
+A descrição completa da submissão está em `MR_DESCRIPTION.md`, derivada do
+template oficial App inclusion. As exceções de srclib do SDK, assinatura e as
+verificações ainda dependentes do CI são explicitamente descritas.
 
-Descrições, ícone e capturas ficam em fastlane/metadata/android. A build local
-Android é validada; a receita deve passar pelo lint/build e pela revisão dos
-mantenedores no ambiente F-Droid antes de ser aceita no catálogo.
+Os metadados Fastlane incluem descrições en-US/pt-BR, ícones, changelogs e quatro
+capturas reais. O teste instrumentado confirma a mensagem de bloqueio sobre um
+alvo que permite overlays; Configurações do Android oculta overlays por segurança.
+
+Os detalhes da validação e os limites estão em `docs/VALIDATION.md`.
