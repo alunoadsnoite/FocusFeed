@@ -14,8 +14,8 @@ Repo: https://github.com/alunoadsnoite/FocusFeed.git
 
 Builds:
   - versionName: 1.0.1
-    versionCode: 21
-    commit: 149155bf621fc501785ac58746775b3323a20fa9
+    versionCode: 4011
+    commit: 3170e6e86357c2ec814d4e69be02c78b4c134499
     output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
     srclibs:
       - flutter@stable
@@ -36,8 +36,8 @@ Builds:
       - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm
 
   - versionName: 1.0.1
-    versionCode: 22
-    commit: 149155bf621fc501785ac58746775b3323a20fa9
+    versionCode: 4012
+    commit: 3170e6e86357c2ec814d4e69be02c78b4c134499
     output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
     srclibs:
       - flutter@stable
@@ -58,8 +58,8 @@ Builds:
       - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm64
 
   - versionName: 1.0.1
-    versionCode: 23
-    commit: 149155bf621fc501785ac58746775b3323a20fa9
+    versionCode: 4013
+    commit: 3170e6e86357c2ec814d4e69be02c78b4c134499
     output: build/app/outputs/flutter-apk/app-x86_64-release.apk
     srclibs:
       - flutter@stable
@@ -87,4 +87,4 @@ VercodeOperation:
   - '%c * 10 + 3'
 UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
 CurrentVersion: 1.0.1
-CurrentVersionCode: 23
+CurrentVersionCode: 4013
