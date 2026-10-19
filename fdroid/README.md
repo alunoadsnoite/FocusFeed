@@ -1,7 +1,7 @@
 # Proposta para o catálogo oficial F-Droid
 
 A receita `io.github.alunoadsnoite.focusfeed.yml` prepara a versão 1.0.1 com três
-builds separados: ARMv7 (1002), ARM64 (2002), x86_64 (4002). O código do Flutter
+builds separados: ARMv7 (21), ARM64 (22), x86_64 (23). Os códigos seguem `versionCode base * 10 + ABI (1/2/3)`. O código do Flutter
 é fixado pela revisão `.metadata`; a receita respeita `pubspec.lock` e não inclui
 material de assinatura. O F-Droid constrói e assina os APKs após revisão.
 

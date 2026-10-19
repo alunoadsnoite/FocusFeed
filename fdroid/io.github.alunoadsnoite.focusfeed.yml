@@ -14,8 +14,8 @@ Repo: https://github.com/alunoadsnoite/FocusFeed.git
 
 Builds:
   - versionName: 1.0.1
-    versionCode: 1002
-    commit: 635018efb6f288605f7e40a0464ef522762ca86e
+    versionCode: 21
+    commit: 149155bf621fc501785ac58746775b3323a20fa9
     output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
     srclibs:
       - flutter@stable
@@ -36,8 +36,8 @@ Builds:
       - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm
 
   - versionName: 1.0.1
-    versionCode: 2002
-    commit: 635018efb6f288605f7e40a0464ef522762ca86e
+    versionCode: 22
+    commit: 149155bf621fc501785ac58746775b3323a20fa9
     output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
     srclibs:
       - flutter@stable
@@ -58,8 +58,8 @@ Builds:
       - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm64
 
   - versionName: 1.0.1
-    versionCode: 4002
-    commit: 635018efb6f288605f7e40a0464ef522762ca86e
+    versionCode: 23
+    commit: 149155bf621fc501785ac58746775b3323a20fa9
     output: build/app/outputs/flutter-apk/app-x86_64-release.apk
     srclibs:
       - flutter@stable
@@ -82,9 +82,9 @@ Builds:
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
 VercodeOperation:
-  - '%c + 1000'
-  - '%c + 2000'
-  - '%c + 4000'
+  - '%c * 10 + 1'
+  - '%c * 10 + 2'
+  - '%c * 10 + 3'
 UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
 CurrentVersion: 1.0.1
-CurrentVersionCode: 4002
+CurrentVersionCode: 23
