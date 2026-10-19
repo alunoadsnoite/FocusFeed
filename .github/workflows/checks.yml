@@ -26,11 +26,11 @@ jobs:
       - run: flutter test
       - run: flutter build apk --debug
       - run: cd android && ./gradlew :app:testDebugUnitTest
-      - run: flutter build apk --release
+      - run: flutter build apk --release --split-per-abi
       - uses: actions/upload-artifact@v4
         with:
           name: unsigned-android-build
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/app-*-release.apk
   ios-simulator:
     runs-on: macos-15
     steps:

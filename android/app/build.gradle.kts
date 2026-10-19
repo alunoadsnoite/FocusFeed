@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.api.ApkVariantOutputImpl
 import java.util.Properties
 
 val releaseKeys = Properties()
@@ -28,10 +29,7 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
-        // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
-        // You can force using the value of versionCode by specifying the `-P force-version-code-ignoring-abi=true`
-        // flag during build.
+        // Base version from pubspec.yaml; split APKs use base * 10 + ABI code.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -54,6 +52,18 @@ android {
             if (!releaseKeysFile.exists() && !unsignedBuild && gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) }) {
                 throw GradleException("Configure .private/key.properties ou FOCUSFEED_UNSIGNED=1 para builds F-Droid.")
             }
+        }
+    }
+}
+
+// Give each ABI a distinct, monotonically increasing F-Droid version code.
+val abiCodes = mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86_64" to 3)
+android.applicationVariants.configureEach {
+    val variant = this
+    variant.outputs.forEach { output ->
+        val abiVersionCode = abiCodes[output.filters.find { it.filterType == "ABI" }?.identifier]
+        if (abiVersionCode != null) {
+            (output as ApkVariantOutputImpl).versionCodeOverride = variant.versionCode * 10 + abiVersionCode
         }
     }
 }
