@@ -1,5 +1,18 @@
 # Revisão das mudanças de Hermes/OpenCode
 
+## Estado atual do F-Droid — 20/10/2026
+
+A [MR !52413](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52413) usa a tag `v1.0.1-fdroid.1`, fonte `3170e6e86357c2ec814d4e69be02c78b4c134499`, versão 1.0.1 e número base 401. A receita gera códigos 4011/4012/4013 para ARMv7/ARM64/x86_64, preservando atualização sobre os códigos antigos 1002/2002/4002. Atualizações por tags estão configuradas.
+
+Segundo a MR, as nove etapas passaram no [pipeline do fork #2963844433](https://gitlab.com/alunoadsnoite/fdroiddata/-/pipelines/2963844433) e no [pipeline acionado pelo mantenedor #2963950139](https://gitlab.com/fdroid/fdroiddata/-/pipelines/2963950139), incluindo os três builds e verificações de APK. Estes são resultados publicados para a fonte submetida, não testes novamente executados nesta atualização documental.
+
+A validação independente solicitada pelo mantenedor continua pendente. O teste anterior de overlay foi corrigido para usar uma Activity de outro APK que permite sobreposição, preservando a exigência de mensagem visível. As restrições de Configurações e de outros apps que ocultam overlays continuam sendo limites reais do Android.
+
+A assinatura reproduzível upstream não foi verificada; a receita solicita assinatura pelo F-Droid. Testes de Screen Time em iPhone continuam pendentes fora do escopo Android. Aprovação do CI não significa aprovação ou publicação no catálogo.
+
+Os registros abaixo são históricos; versões, códigos e falhas antigas devem ser lidos nas respectivas datas.
+
+
 Data: 2026-10-13. Código analisado: f967a90 e mudanças desde db6969c.
 GitHub/main e GitLab/main estavam iguais ao HEAD local ao iniciar a revisão.
 Não é possível atribuir cada commit a uma ferramenta somente pelo histórico Git.
