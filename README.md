@@ -124,7 +124,10 @@ flutter build apk --release
 A chave e suas senhas ficam em `.private/` ignorado pelo Git. Faça um backup privado;
 a mesma chave é necessária para atualizar instalações distribuídas diretamente.
 Para build sem assinatura destinado ao F-Droid: `FOCUSFEED_UNSIGNED=1 flutter build apk --release`.
-O pacote Android é `io.github.alunoadsnoite.focusfeed`, versão 1.0.1 (2).
+O pacote Android é `io.github.alunoadsnoite.focusfeed`, versão 1.0.1, número base 401.
+A submissão usa a tag `v1.0.1-fdroid.1` e códigos por arquitetura 4011/4012/4013.
 F-Droid constrói/assina sua própria versão após revisão; submissão não é aprovação.
 Metadados Fastlane estão em `fastlane/metadata/android` e a proposta de receita em
-`fdroid/`. O status da publicação e a evidência de testes ficam em `docs/`.
+`fdroid/`. O status da publicação e a evidência de testes ficam em [docs/REVIEW.md](docs/REVIEW.md)
+e [docs/VALIDATION.md](docs/VALIDATION.md). A [MR !52413](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52413)
+registra CI aprovado; revisão funcional independente e aprovação continuam pendentes.
