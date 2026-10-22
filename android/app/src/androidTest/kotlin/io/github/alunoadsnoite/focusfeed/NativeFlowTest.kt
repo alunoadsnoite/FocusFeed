@@ -95,6 +95,20 @@ class NativeFlowTest {
             screenshot.recycle()
         }
     }
+    @Test fun selectedAppIsBlockedAgainAfterReturningToFocusFeedTwice() {
+        focus(60)
+        repeat(2) {
+            openBlockableApp()
+            waitFor { BlockingOverlay.visible }
+            waitFor { instrumentation.uiAutomation.windows.any { window ->
+                window.root?.findAccessibilityNodeInfosByText("Você está em momento de foco!")?.isNotEmpty() == true
+            } }
+            instrumentation.startActivitySync(Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            waitFor { !BlockingOverlay.visible }
+        }
+    }
+
     @Test fun rewardExpiresAndReblocksWithoutFlutterCallback() {
         worker {
             val p = NativeSessionRepository.load(context)

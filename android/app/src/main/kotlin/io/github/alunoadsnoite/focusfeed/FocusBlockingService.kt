@@ -13,11 +13,12 @@ import android.os.Looper
 import android.os.PowerManager
 
 class FocusBlockingService : Service() {
-    companion object { @Volatile var running = false }
+    companion object {
+        @Volatile var running = false
+    }
     private val main = Handler(Looper.getMainLooper())
     private lateinit var overlay: BlockingOverlay
-    private var foreground: String? = null
-    private var cursor = 0L
+    private val foreground = ForegroundActivityTracker()
     private var phase = ""
     private var destroyed = false
     private var generation = 0
@@ -46,20 +47,20 @@ class FocusBlockingService : Service() {
                                 promote(phase)
                             }
                             val now = System.currentTimeMillis()
-                            val events = (getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager).queryEvents(cursor, now)
+                            val events = (getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager).queryEvents(ForegroundActivityTracker.queryStart(now), now)
                             val event = UsageEvents.Event()
                             while (events.hasNextEvent()) {
                                 events.getNextEvent(event)
-                                @Suppress("DEPRECATION")
                                 when (event.eventType) {
-                                    UsageEvents.Event.MOVE_TO_FOREGROUND -> foreground = event.packageName
-                                    UsageEvents.Event.MOVE_TO_BACKGROUND -> if (foreground == event.packageName) foreground = null
+                                    UsageEvents.Event.ACTIVITY_RESUMED -> foreground.resume(
+                                        event.packageName, event.className, event.timeStamp)
+                                    UsageEvents.Event.ACTIVITY_PAUSED -> foreground.pause(
+                                        event.packageName, event.className, event.timeStamp)
                                 }
                             }
-                            cursor = now
                             val screen = (getSystemService(POWER_SERVICE) as PowerManager).isInteractive
                             val unlocked = !(getSystemService(KEYGUARD_SERVICE) as KeyguardManager).isKeyguardLocked
-                            if (currentPhase != "reward" && screen && unlocked && foreground in selected && foreground != packageName) overlay.show(balance == 0L)
+                            if (currentPhase != "reward" && screen && unlocked && foreground.packageName in selected && foreground.packageName != packageName) overlay.show(balance == 0L)
                             else overlay.hide()
                             main.postDelayed(this, 500)
                         } catch (_: Exception) { failClosedSession("Monitor indisponível. Retome o foco no app.") }
@@ -72,8 +73,6 @@ class FocusBlockingService : Service() {
         super.onCreate()
         running = true
         overlay = BlockingOverlay(this)
-        foreground = packageName
-        cursor = System.currentTimeMillis()
         // Must promote promptly, before asynchronous disk work.
         promote("focus")
     }
