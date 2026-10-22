@@ -49,3 +49,10 @@ during an earned reward and blocked again on expiry. Repeat with APKPure on the
 Samsung / Android 15 configuration from the original report. Apps that explicitly
 hide non-system overlays may still suppress this window; no Android protection
 is bypassed by this patch.
+
+## Release 1.0.2 — 2026-10-22
+
+PR #2 is merged. Version 1.0.2 uses base code 402 and ABI codes
+4021/4022/4023, with changelogs in both listing locales. Flutter analysis
+and 20 tests passed again for this release preparation. The Samsung/APKPure
+retest remains required; the local software emulator stayed offline.

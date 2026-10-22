@@ -1,0 +1,1 @@
+Fix delayed foreground app events and preserve blocking when reopening a selected app.
