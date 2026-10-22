@@ -31,8 +31,21 @@ recipe update before its native change can be distributed by F-Droid.
 
 ## Validation
 
-Flutter 3.47.7 analysis and all 20 Flutter tests passed. Android compilation and
-JVM tests are in progress while missing Flutter artifacts download. No Samsung,
+Flutter 3.47.7 analysis and all 20 Flutter tests passed. The four new tracker tests also passed
+with the Kotlin 2.4.0 compiler and JUnit 4.13.2, independently of Gradle. GitHub Actions run 39799926090 passed Android debug/release compilation and
+the complete JVM test task, plus the iOS simulator build. Local Gradle initially
+needed to download uncached Flutter native artifacts. No Samsung,
 APKPure or physical-device retest is claimed. Local Android 16 and Android 11
 emulators terminated during startup, before the app could be installed. The new
 instrumentation scenario therefore remains unexecuted in this environment.
+
+## Device retest still required
+
+Grant usage access and overlay permission, select the target app while idle,
+and start a one-minute focus session. Launch the selected app, verify the
+blocking message is actually visible, return to FocusFeed, and launch it again.
+Also verify an unselected app is not covered, and that a selected app is released
+during an earned reward and blocked again on expiry. Repeat with APKPure on the
+Samsung / Android 15 configuration from the original report. Apps that explicitly
+hide non-system overlays may still suppress this window; no Android protection
+is bypassed by this patch.
