@@ -1,0 +1,1 @@
+Corrige eventos atrasados de aplicativos em primeiro plano e preserva o bloqueio ao reabrir o aplicativo selecionado.
