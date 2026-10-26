@@ -13,9 +13,9 @@ RepoType: git
 Repo: https://github.com/alunoadsnoite/FocusFeed.git
 
 Builds:
-  - versionName: 1.0.1
-    versionCode: 4011
-    commit: 3170e6e86357c2ec814d4e69be02c78b4c134499
+  - versionName: 1.0.2
+    versionCode: 4021
+    commit: d2c3b34d730e90426cd7ef184af07baa4d6b8a51
     output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
     srclibs:
       - flutter@stable
@@ -35,9 +35,9 @@ Builds:
       - export FOCUSFEED_UNSIGNED=1
       - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm
 
-  - versionName: 1.0.1
-    versionCode: 4012
-    commit: 3170e6e86357c2ec814d4e69be02c78b4c134499
+  - versionName: 1.0.2
+    versionCode: 4022
+    commit: d2c3b34d730e90426cd7ef184af07baa4d6b8a51
     output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
     srclibs:
       - flutter@stable
@@ -57,9 +57,9 @@ Builds:
       - export FOCUSFEED_UNSIGNED=1
       - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm64
 
-  - versionName: 1.0.1
-    versionCode: 4013
-    commit: 3170e6e86357c2ec814d4e69be02c78b4c134499
+  - versionName: 1.0.2
+    versionCode: 4023
+    commit: d2c3b34d730e90426cd7ef184af07baa4d6b8a51
     output: build/app/outputs/flutter-apk/app-x86_64-release.apk
     srclibs:
       - flutter@stable
@@ -86,5 +86,5 @@ VercodeOperation:
   - '%c * 10 + 2'
   - '%c * 10 + 3'
 UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
-CurrentVersion: 1.0.1
-CurrentVersionCode: 4013
+CurrentVersion: 1.0.2
+CurrentVersionCode: 4023

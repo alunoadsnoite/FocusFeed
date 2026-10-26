@@ -1,4 +1,32 @@
-## Abstract
+# Current submission — 2026-10-26
+
+Version **1.0.2**, ABI codes **4021 / 4022 / 4023**. The recipe pins
+`d2c3b34d730e90426cd7ef184af07baa4d6b8a51` (tag `v1.0.2`).
+[Pipeline #2987337391](https://gitlab.com/alunoadsnoite/fdroiddata/-/pipelines/2987337391)
+passed all nine jobs, including the three ABI builds and APK checks.
+
+The 32 Code Quality findings comprise three Minor SYSTEM_ALERT_WINDOW warnings
+(one per ABI) and 29 informational findings: required permissions, R8 marker,
+ABI/size, test-signed artifacts and Fastlane metadata. The overlay permission is
+needed for the voluntary blocker; Usage Access reads local foreground events;
+the foreground-service permissions maintain the user-started monitor;
+notifications are optional; boot recovery restores paused progress without
+crediting downtime. AndroidX generates the non-exported receiver permission.
+The artifact links are for testing and do not establish official publication.
+See [the report](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52413/reports/code-quality).
+
+Seven instrumented tests passed on a Motorola Edge 70 Fusion / Android 17
+using the 1.0.2 debug APK and a separate overlay-compatible test target. The
+two-launch test now waits for visible overlay behavior instead of Flutter's
+idle event queue; an unselected-app scenario was added. This does not validate
+the release APK's complete UI redemption flow or APKPure on Samsung.
+
+Independent Samsung SM-G998B / Android 15 / APKPure retesting remains required:
+two consecutive launches, unselected-app access, reward redemption and blocking
+after expiry. The event overlap/activity-class fix has not established the
+original device-specific cause. Maintainer acceptance remains pending.
+
+# Abstract
 
 ### Please introduce the functions and usage of your app in summary, and also attach some screenshots.
 
@@ -63,19 +91,19 @@ The aim is to connect focus time with a concrete, earned break allowance while k
 
 ### Pipeline
 
-* [ ] All pipelines should pass.
-* [ ] All warnings and errors in the Reports tab should be fixed or explained.
+* [x] All pipelines should pass.
+* [x] All warnings and errors in the Reports tab should be fixed or explained.
 * [x] F-Droid CI runners are under GitLab's FOSS program, so there's no need for you to pay for any CI time. If Gitlab starts asking for phone numbers or credit cards don't submit anything, just leave a note in the MR so we know we need to trigger the CI.
 
 ## Explanations and validation
 
 - **Author and related requests:** I am the upstream maintainer submitting this app through the same account. This MR is the existing FocusFeed submission; no separate FocusFeed RFP issue or duplicate MR was found in the project searches on 2026-10-14. The public fork uses the unprotected `focusfeed-metadata` branch.
 - **Metadata:** only `metadata/io.github.alunoadsnoite.focusfeed.yml` belongs in this MR. Upstream Fastlane contains en-US and pt-BR summaries, descriptions, icons, changelogs and four real phone screenshots. The app UI is Portuguese; en-US provides English descriptions and the same actual screenshots.
-- **Version and source:** the recipe uses version 1.0.1 with the ABI configuration in source commit `3170e6e86357c2ec814d4e69be02c78b4c134499` (tag `v1.0.1-fdroid.1`; the existing `v1.0.1` tag is unchanged). Auto updates use tags and the locked pubspec version. ARMv7/ARM64/x86_64 versionCodes are 4011/4012/4013, following `base * 10 + ABI`; `VercodeOperation` tracks those three variants.
+- **Version and source:** version 1.0.2, source `d2c3b34d730e90426cd7ef184af07baa4d6b8a51` (tag `v1.0.2`), base 402 and ABI codes 4021/4022/4023. Auto updates use tags and `base * 10 + ABI`. Existing tags were not moved.
 - **SDK source exception:** Flutter is a toolchain srclib, not an additional application source repository. The recipe follows the official `templates/build-flutter.yml` alternative: `flutter@stable`, then checkout the exact SDK revision recorded in `.metadata`. Other external source repositories are not used.
 - **Signing exception:** upstream reproducible signing has not been verified and no reproducible upstream APK is published. Please use the F-Droid signing key. `FOCUSFEED_UNSIGNED=1` excludes the developer signing configuration. We understand that switching later to the upstream reproducible-signing arrangement is not available under the template's policy. No signing secrets are committed.
 - **ABI splitting:** separate builds use `--split-per-abi --target-platform=...` and architecture-specific output paths. Local unsigned release sizes are approximately 14.3 MB (ARMv7), 17.0 MB (ARM64) and 18.4 MB (x86_64), compared with the previous ~47 MB universal APK. Flutter's release build already enables R8 and resource shrinking.
 - **Local validation:** Flutter analyze passed, 20 Flutter tests and 13 JVM tests passed, all five instrumented Android 14 scenarios passed, and all three split release APKs compiled. The previous overlay test used Android Settings, which deliberately hides non-system overlays (`mForceHideNonSystemOverlayWindow=true`). It now uses a separate overlay-compatible test activity and still requires the actual visible focus message. Android's protections were not bypassed.
 - **Permissions:** Usage Access checks only foreground-app events locally; SYSTEM_ALERT_WINDOW draws the voluntary blocker; foreground-service permissions maintain the user-started monitor; notifications are optional; BOOT_COMPLETED restores paused progress without awarding downtime credit. No QUERY_ALL_PACKAGES or accessibility service is declared. Launcher visibility is limited to apps returned by the launcher query.
-- **Pipeline:** the previous recipe passed all nine jobs in https://gitlab.com/alunoadsnoite/fdroiddata/-/pipelines/2944642808. A new pipeline must validate the new source commit and three split build recipes. The pipeline and Reports checklist items remain unchecked until that run passes and its findings have been reviewed. Local checks do not replace F-Droid CI or maintainer acceptance.
+- **Pipeline:** all nine jobs passed in https://gitlab.com/alunoadsnoite/fdroiddata/-/pipelines/2987337391 on the submitted recipe. The 32 Reports findings are explained above. Independent Samsung testing and maintainer acceptance remain pending.
 - **Platform scope:** this submission builds Android; `rm: ios` excludes iOS source. iPhone Screen Time validation remains pending upstream and is not claimed as Android build validation.

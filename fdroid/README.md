@@ -1,20 +1,22 @@
 # Proposta para o catálogo oficial F-Droid
 
-A receita `io.github.alunoadsnoite.focusfeed.yml` prepara a versão 1.0.1 com três
-builds separados: ARMv7 (4011), ARM64 (4012), x86_64 (4013). Os códigos seguem `versionCode base * 10 + ABI (1/2/3)`. O código do Flutter
-é fixado pela revisão `.metadata`; a receita respeita `pubspec.lock` e não inclui
-material de assinatura. O F-Droid constrói e assina os APKs após revisão.
+A receita `io.github.alunoadsnoite.focusfeed.yml` espelha a submissão da versão
+1.0.2 na [MR !52413](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52413).
+Fixa a fonte `d2c3b34d730e90426cd7ef184af07baa4d6b8a51` (tag `v1.0.2`),
+com builds ARMv7 (4021), ARM64 (4022) e x86_64 (4023).
+Os códigos seguem `versionCode base * 10 + ABI (1/2/3)` e preservam upgrades.
+O SDK Flutter é fixado pela revisão de `.metadata`; `pubspec.lock` é respeitado
+e `FOCUSFEED_UNSIGNED=1` exclui a configuração de assinatura do desenvolvedor.
 
-A descrição completa da submissão está em `MR_DESCRIPTION.md`, derivada do
-template oficial App inclusion. As exceções de srclib do SDK, assinatura e as
-verificações ainda dependentes do CI são explicitamente descritas.
+O pipeline #2987337391 passou as nove etapas, incluindo as três arquiteturas.
+O relatório tem avisos de sobreposição e informações de permissões/APKs,
+explicados em [docs/REVIEW.md](../docs/REVIEW.md). Isso não confirma publicação.
 
-Os metadados Fastlane incluem descrições en-US/pt-BR, ícones, changelogs e quatro
-capturas reais. O teste instrumentado confirma a mensagem de bloqueio sobre um
-alvo que permite overlays; Configurações do Android oculta overlays por segurança.
+Ainda falta reteste independente do bloqueio no Samsung SM-G998B / Android 15,
+incluindo APKPure em duas aberturas, app não selecionado, resgate e expiração.
+A correção de eventos de primeiro plano não estabelece a causa no Samsung.
+Os metadados Fastlane incluem descrições en-US/pt-BR, ícones, changelogs para
+4021–4023 e quatro capturas reais com interface portuguesa.
 
-Os detalhes da validação e os limites estão em `docs/VALIDATION.md`.
-
-O número base passa de 2 para 401 para que todos os novos APKs ultrapassem o maior código antigo (4002). A versão exibida continua 1.0.1; as tags existentes não são movidas.
-
-A tag adicional `v1.0.1-fdroid.1` aponta ao commit com o novo número base; `v1.0.1` permanece inalterada. A detecção de atualizações do F-Droid pode identificar a preparação sem mover uma tag existente.
+`MR_DESCRIPTION.md` contém o texto de referência da submissão; resultados locais
+e limites ficam em [docs/VALIDATION.md](../docs/VALIDATION.md).

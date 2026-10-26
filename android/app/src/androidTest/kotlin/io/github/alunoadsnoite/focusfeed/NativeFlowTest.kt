@@ -103,10 +103,31 @@ class NativeFlowTest {
             waitFor { instrumentation.uiAutomation.windows.any { window ->
                 window.root?.findAccessibilityNodeInfosByText("Você está em momento de foco!")?.isNotEmpty() == true
             } }
-            instrumentation.startActivitySync(Intent(context, MainActivity::class.java)
+            // Flutter may keep drawing while the timer is active. Wait for the
+            // observable overlay state instead of startActivitySync's idle queue.
+            context.startActivity(Intent(context, MainActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
             waitFor { !BlockingOverlay.visible }
         }
+    }
+
+    @Test fun unselectedAppRemainsAccessibleDuringFocus() {
+        focus(60)
+        worker {
+            val p = NativeSessionRepository.load(context)
+            p.apps[blockablePackage] = false
+            NativeSessionRepository.save(context, p)
+        }
+        openBlockableApp()
+        val end = SystemClock.elapsedRealtime() + 3000
+        while (SystemClock.elapsedRealtime() < end) {
+            Assert.assertFalse("Unselected app must not be blocked", BlockingOverlay.visible)
+            Assert.assertFalse(instrumentation.uiAutomation.windows.any { window ->
+                window.root?.findAccessibilityNodeInfosByText("Você está em momento de foco!")?.isNotEmpty() == true
+            })
+            Thread.sleep(100)
+        }
+        Assert.assertEquals("focus", worker { NativeSessionRepository.load(context).session.phase })
     }
 
     @Test fun rewardExpiresAndReblocksWithoutFlutterCallback() {
