@@ -1,14 +1,80 @@
 # Validação do MVP
 
-## Estado atual do F-Droid — 20/10/2026
+## Estado atual do F-Droid — 26/10/2026
 
-A [MR !52413](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52413) usa a tag `v1.0.1-fdroid.1`, fonte `3170e6e86357c2ec814d4e69be02c78b4c134499`, versão 1.0.1 e número base 401. A receita gera códigos 4011/4012/4013 para ARMv7/ARM64/x86_64, preservando atualização sobre os códigos antigos 1002/2002/4002. Atualizações por tags estão configuradas.
+A [MR !52413](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52413) está aberta
+com a versão 1.0.2, tag `v1.0.2`, fonte
+`d2c3b34d730e90426cd7ef184af07baa4d6b8a51` e número base 402. Os códigos
+ARMv7/ARM64/x86_64 são 4021/4022/4023 (`base * 10 + ABI`). A receita neste
+repositório espelha a receita submetida no commit fdroiddata
+`00c3d8f2610b725de05049beea534d3433591172`; atualizações por tags permanecem ativas.
 
-Segundo a MR, as nove etapas passaram no [pipeline do fork #2963844433](https://gitlab.com/alunoadsnoite/fdroiddata/-/pipelines/2963844433) e no [pipeline acionado pelo mantenedor #2963950139](https://gitlab.com/fdroid/fdroiddata/-/pipelines/2963950139), incluindo os três builds e verificações de APK. Estes são resultados publicados para a fonte submetida, não testes novamente executados nesta atualização documental.
+O [pipeline #2987337391](https://gitlab.com/alunoadsnoite/fdroiddata/-/pipelines/2987337391)
+passou as nove etapas: build das três arquiteturas, APK, código-fonte, schema,
+scripts, rewritemeta, lint, redirecionamento Git e detecção de atualizações.
+Os resultados foram consultados em 26/10/2026. CI aprovado não confirma
+aceitação nem publicação no catálogo.
 
-A validação independente solicitada pelo mantenedor continua pendente. O teste anterior de overlay foi corrigido para usar uma Activity de outro APK que permite sobreposição, preservando a exigência de mensagem visível. As restrições de Configurações e de outros apps que ocultam overlays continuam sendo limites reais do Android.
+O [relatório de qualidade](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52413/reports/code-quality)
+contém 32 descobertas: três avisos Minor sobre SYSTEM_ALERT_WINDOW (um por ABI)
+e 29 informações sobre permissões, R8, tamanho/ABI, APKs de teste e Fastlane.
+SYSTEM_ALERT_WINDOW desenha o bloqueador voluntário; PACKAGE_USAGE_STATS consulta
+os eventos locais de primeiro plano. FOREGROUND_SERVICE e SPECIAL_USE mantêm o
+monitor iniciado pelo usuário; POST_NOTIFICATIONS permite notificações opcionais;
+RECEIVE_BOOT_COMPLETED recupera progresso pausado sem crédito de tempo desligado.
+DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION é a proteção de receivers gerada pelo
+AndroidX. Os links de APK assinado são artefatos de CI para teste e não comprovam
+assinatura ou distribuição no catálogo oficial. Não há permissão INTERNET no
+manifest de release. Nenhum aviso foi ocultado nem permissão necessária removida.
 
-A assinatura reproduzível upstream não foi verificada; a receita solicita assinatura pelo F-Droid. Testes de Screen Time em iPhone continuam pendentes fora do escopo Android. Aprovação do CI não significa aprovação ou publicação no catálogo.
+O tester relatou ausência de bloqueio do APKPure em duas aberturas no Samsung
+SM-G998B / Android 15 com a versão 1.0.1. A versão 1.0.2 inclui rastreamento por
+pacote/Activity e uma janela sobreposta de eventos de 10 segundos, além de
+changelogs para 4021/4022/4023 nos dois idiomas. Essas mudanças ainda não
+estabelecem a causa nem comprovam a resolução naquele aparelho. Continua
+necessário retestar duas aberturas consecutivas, acesso a app não selecionado,
+resgate de saldo e bloqueio após expiração no Samsung. Capturas en-US mostram
+a interface portuguesa, conforme declarado na submissão.
+
+A assinatura reproduzível upstream e Screen Time em iPhone continuam pendentes;
+a receita solicita assinatura pelo F-Droid. Apps que ocultam overlays podem
+suprimir o bloqueador por proteção do Android. A aceitação depende dos mantenedores.
+
+## Verificações locais — 26/10/2026
+
+Na fonte `d2c3b34d730e90426cd7ef184af07baa4d6b8a51`:
+
+- `flutter analyze`: sem problemas.
+- `flutter test`: 20 testes aprovados.
+- `:app:testDebugUnitTest`: 17 testes JVM aprovados (13 SessionEngine e 4 ForegroundActivityTracker).
+- `:app:assembleDebugAndroidTest`: APK de instrumentação compilado; não executado.
+- `FOCUSFEED_UNSIGNED=1 flutter build apk --debug`: aprovado.
+- Receita YAML analisada, idêntica byte a byte à submetida; fonte, versões,
+  códigos e seis changelogs 4021–4023 verificados.
+
+### Aparelho físico — Motorola Edge 70 Fusion / Android 17 (API 37)
+
+Sete testes instrumentados passaram em 26/10/2026 (38,481 s): bloqueio visível
+com saldo zero; duas aberturas consecutivas com retorno ao FocusFeed; app não
+selecionado sem overlay por três segundos; crédito persistido e notificação;
+expiração da recompensa e retorno ao bloqueio; revogação de permissão; migração.
+
+O APK debug da fonte 1.0.2 foi instalado com sufixo `.debug`, separado da instalação
+do usuário. O alvo é uma Activity de outro APK de teste que permite overlays,
+não APKPure. Não foram apagados dados do pacote de produção. A suíte concede
+permissões à cópia debug e inicia sessões curtas pelo repositório nativo; isso
+não substitui um teste manual completo dos botões de resgate no APK release.
+
+A primeira rodada passou 5/6 e falhou ao retornar à Activity Flutter usando
+`startActivitySync`, que esperava a fila ficar inativa por 45 segundos. A tela
+também entrou em repouso nessa rodada. O teste agora inicia a Activity de forma
+assíncrona e mantém a exigência de desaparecimento do overlay no retorno e de
+mensagem visível em cada nova abertura. O segundo ensaio, com a tela desbloqueada,
+passou 7/7. Nenhuma mudança no código de execução do app foi necessária.
+
+Os emuladores Android 16 e 11 encerraram com segmentation fault antes desta rodada
+física. O caso Samsung SM-G998B / Android 15 / APKPure continua sem confirmação;
+[fdroid/RETEST.md](../fdroid/RETEST.md) descreve o roteiro específico pendente.
 
 Os registros abaixo são históricos; versões, códigos e falhas antigas devem ser lidos nas respectivas datas.
 
