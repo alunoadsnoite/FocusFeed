@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import 'local_progress_store.dart';
+import 'day_key.dart';
 
 abstract class SessionPlatform {
   Future<dynamic> invoke(String method, [Map<String, dynamic>? arguments]);
@@ -106,17 +106,15 @@ class SessionController extends ChangeNotifier {
     DateTime Function()? now,
     bool poll = true,
   }) : _platform = platform ?? NativeSessionPlatform(),
-       _now = now ?? DateTime.now {
-    if (poll) {
-      _ticker = Timer.periodic(
-        const Duration(seconds: 1),
-        (_) => unawaited(refresh()),
-      );
-    }
+       _now = now ?? DateTime.now,
+       _poll = poll {
+    if (poll) _scheduleTick();
   }
   final SessionPlatform _platform;
   final DateTime Function() _now;
+  final bool _poll;
   Timer? _ticker;
+  bool _foreground = true;
   SessionView? state;
   List<InstalledApp> apps = [];
   String? error;
@@ -125,7 +123,36 @@ class SessionController extends ChangeNotifier {
   bool _disposed = false;
   int _revision = 0;
   bool get loaded => state != null;
+  DateTime get now => _now();
   int get focusToday => state?.history[localDayKey(_now())] ?? 0;
+
+  /// Intervalo adaptativo: 1 s durante foco/recompensa, 10 s ocioso e 30 s em
+  /// segundo plano. Evita acordar o processo e o canal nativo sem necessidade.
+  Duration get _pollDelay {
+    if (!_foreground) return const Duration(seconds: 30);
+    return state?.active == true
+        ? const Duration(seconds: 1)
+        : const Duration(seconds: 10);
+  }
+
+  void _scheduleTick() {
+    _ticker?.cancel();
+    if (!_poll || _disposed) return;
+    _ticker = Timer(_pollDelay, () {
+      unawaited(
+        refresh().whenComplete(() {
+          if (!_disposed) _scheduleTick();
+        }),
+      );
+    });
+  }
+
+  /// A tela informa quando o app entra ou sai do primeiro plano.
+  void setForeground(bool foreground) {
+    if (_foreground == foreground) return;
+    _foreground = foreground;
+    _scheduleTick();
+  }
   void _notify() {
     if (!_disposed) notifyListeners();
   }
@@ -154,6 +181,7 @@ class SessionController extends ChangeNotifier {
     } finally {
       busy = false;
       _notify();
+      _scheduleTick();
     }
   }
 
@@ -195,6 +223,7 @@ class SessionController extends ChangeNotifier {
     } finally {
       busy = false;
       _notify();
+      _scheduleTick();
     }
   }
 

@@ -17,20 +17,34 @@ object FocusNotifications {
     }
     private fun open(c: Context) = PendingIntent.getActivity(c, 0, Intent(c, MainActivity::class.java),
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-    fun ongoing(c: Context, phase: String): Notification {
+    fun ongoing(c: Context, phase: String, remaining: Long = 0, total: Long = 0): Notification {
         val manager = c.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= 26) manager.createNotificationChannel(
             NotificationChannel("focus", "Monitor de foco", NotificationManager.IMPORTANCE_LOW))
         val stop = PendingIntent.getBroadcast(c, 1, Intent(c, SessionReceiver::class.java).setAction("focusfeed.STOP"),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val pause = PendingIntent.getBroadcast(c, 2, Intent(c, SessionReceiver::class.java).setAction("focusfeed.PAUSE"),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val builder = if (Build.VERSION.SDK_INT >= 26) Notification.Builder(c, "focus") else {
             @Suppress("DEPRECATION") Notification.Builder(c)
         }
-        return builder.setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+        builder.setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setContentTitle(if (phase == "reward") "FocusFeed: recompensa ativa" else "FocusFeed: bloqueio ativo")
-            .setContentText(if (phase == "reward") "Redes liberadas temporariamente." else "Toque para voltar ao FocusFeed.")
+            .setContentText(
+                when {
+                    phase == "reward" -> "Redes liberadas temporariamente."
+                    phase == "focus" && remaining > 0 -> "Faltam ${SessionEngine.label(remaining)}."
+                    else -> "Toque para voltar ao FocusFeed."
+                }
+            )
             .setContentIntent(open(c)).setOngoing(true)
-            .addAction(Notification.Action.Builder(null, "Parar", stop).build()).build()
+        if (phase == "focus") builder.addAction(Notification.Action.Builder(null, "Pausar", pause).build())
+        builder.addAction(Notification.Action.Builder(null, "Parar", stop).build())
+        if (total > 0) {
+            val done = (total - remaining).coerceIn(0, total)
+            builder.setProgress(1000, ((done * 1000) / total).toInt(), false)
+        }
+        return builder.build()
     }
     fun alert(c: Context, event: SessionEvent) {
         if (!enabled(c)) return

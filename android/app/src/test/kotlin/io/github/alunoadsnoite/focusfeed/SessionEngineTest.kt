@@ -124,5 +124,16 @@ class SessionEngineTest {
         assertEquals(id, p.session.id)
         assertEquals(50L, p.session.focusRemainingSeconds)
     }
+    @Test fun creditedIdsStayBounded() {
+        val p = SessionProgress()
+        repeat(40) { i ->
+            val startElapsed = i * 5_000L
+            val startWall = wall + i * 5_000L
+            SessionEngine.start(p, 1, startElapsed, startWall, 1)
+            SessionEngine.advance(p, startElapsed + 1_000L, startWall + 1_000L, 1)
+            assertEquals("idle", p.session.phase)
+        }
+        assertEquals(32, p.credited.size)
+    }
 
 }

@@ -37,6 +37,23 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "focusfeed/settings")
+            .setMethodCallHandler { call, result ->
+                val options = getSharedPreferences("focusfeed_options", MODE_PRIVATE)
+                when (call.method) {
+                    "loadTheme" -> result.success(options.getString("theme", "system"))
+                    "saveTheme" -> {
+                        val value = call.argument<String>("value")
+                        if (value == null || (value != "system" && value != "light" && value != "dark")) {
+                            result.error("invalid_theme", "Tema desconhecido.", null)
+                        } else {
+                            options.edit().putString("theme", value).apply()
+                            result.success(null)
+                        }
+                    }
+                    else -> result.notImplemented()
+                }
+            }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "focusfeed/session")
             .setMethodCallHandler { call, result ->
                 if (call.method == "requestNotifications") {

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:focus_feed/main.dart';
 import 'package:focus_feed/permissions.dart';
 import 'package:focus_feed/session_controller.dart';
+import 'package:focus_feed/settings.dart';
 
 import 'fake_session_platform.dart';
 
@@ -113,6 +114,27 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     c.dispose();
   });
+  testWidgets('settings tab selects a theme and shows developer contact', (
+    tester,
+  ) async {
+    final native = FakeSessionPlatform();
+    final settings = SettingsController(platform: _FakeSettingsPlatform());
+    final c = SessionController(platform: native, poll: false);
+    await tester.pumpWidget(FocusFeedApp(controller: c, settings: settings));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ajustes'));
+    await tester.pumpAndSettle();
+    expect(find.text('Valdenor Tavares'), findsOneWidget);
+    expect(find.text('valdenor.sa@proton.me'), findsOneWidget);
+    await tester.tap(find.text('Escuro'));
+    await tester.pumpAndSettle();
+    expect(settings.mode, AppThemeMode.dark);
+    final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.dark);
+    await tester.pumpWidget(const SizedBox());
+    settings.dispose();
+    c.dispose();
+  });
   testWidgets('iOS exposes the native Screen Time picker', (tester) async {
     final native = FakeSessionPlatform()..platform = 'ios';
     final c = SessionController(platform: native, poll: false);
@@ -123,10 +145,22 @@ void main() {
       200,
       scrollable: find.byType(Scrollable).first,
     );
+    await tester.ensureVisible(find.text('Selecionar apps no iOS'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Selecionar apps no iOS'));
     await tester.pumpAndSettle();
     expect(native.calls.last, 'pickApps');
     await tester.pumpWidget(const SizedBox());
     c.dispose();
   });
+}
+
+class _FakeSettingsPlatform implements SettingsPlatform {
+  String? stored;
+
+  @override
+  Future<String?> loadTheme() async => stored;
+
+  @override
+  Future<void> saveTheme(String value) async => stored = value;
 }

@@ -18,14 +18,16 @@ class RewardWallet {
   static int earnedSeconds(Duration worked, {double? rate}) {
     if (worked.isNegative) throw ArgumentError.value(worked, 'worked');
     final r = rate ?? defaultRate;
-    if (r <= 0 || r > 1) {
+    if (r.isNaN || r.isInfinite || r <= 0 || r > 1) {
       throw ArgumentError.value(
         r,
         'rate',
         'A taxa de recompensa deve ser > 0 e <= 1.',
       );
     }
-    return (worked.inSeconds * r).round();
+    // Trunca como os motores nativos (Android/iOS), que usam segundos / 5.
+    // Arredondar mudaria o crédito de sessões curtas (8 s: 1, não 2).
+    return (worked.inSeconds * r).floor();
   }
 
   int creditCompletedFocus(Duration worked) {

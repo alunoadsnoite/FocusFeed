@@ -51,5 +51,23 @@ import UserNotifications
         result(FlutterMethodNotImplemented)
       }
     }
+    let settings = FlutterMethodChannel(name: "focusfeed/settings", binaryMessenger: registrar.messenger())
+    settings.setMethodCallHandler { call, result in
+      let defaults = UserDefaults.standard
+      switch call.method {
+      case "loadTheme":
+        result(defaults.string(forKey: "focusfeed_theme") ?? "system")
+      case "saveTheme":
+        let value = (call.arguments as? [String: Any])?["value"] as? String
+        guard let value, ["system", "light", "dark"].contains(value) else {
+          result(FlutterError(code: "invalid_theme", message: "Tema desconhecido.", details: nil))
+          return
+        }
+        defaults.set(value, forKey: "focusfeed_theme")
+        result(nil)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
   }
 }

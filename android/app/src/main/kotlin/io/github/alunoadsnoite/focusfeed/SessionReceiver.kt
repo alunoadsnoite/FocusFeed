@@ -15,6 +15,12 @@ class SessionReceiver : BroadcastReceiver() {
                     SessionEngine.stop(p)
                     NativeSessionRepository.save(context, p)
                     context.stopService(Intent(context, FocusBlockingService::class.java))
+                } else if (intent.action == "focusfeed.PAUSE") {
+                    if (p.session.phase == "focus") {
+                        SessionEngine.pause(p)
+                        NativeSessionRepository.save(context, p)
+                    }
+                    context.stopService(Intent(context, FocusBlockingService::class.java))
                 } else if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
                     if (SessionEngine.active(p.session)) {
                         SessionEngine.interrupt(p, "Celular reiniciado. Retome o foco pausado no FocusFeed; nenhum crédito foi gerado enquanto estava desligado.")

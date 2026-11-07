@@ -22,7 +22,8 @@ class FocusBlockingService : Service() {
     private var phase = ""
     private var destroyed = false
     private var generation = 0
-    private val poll = object : Runnable {
+
+    private val poll: Runnable = object : Runnable {
         override fun run() {
             if (destroyed) return
             val token = generation
@@ -38,37 +39,69 @@ class FocusBlockingService : Service() {
                     val currentPhase = p.session.phase
                     val selected = p.apps.filterValues { it }.keys.toSet()
                     val balance = p.rewardSeconds
+                    val remaining = if (currentPhase == "focus") p.session.focusRemainingSeconds else p.session.rewardRemainingSeconds
+                    val total = if (currentPhase == "focus") p.session.focusTotalSeconds else 0L
+                    val detail = detail(p)
+                    val screen = (getSystemService(POWER_SERVICE) as PowerManager).isInteractive
+                    val unlocked = !(getSystemService(KEYGUARD_SERVICE) as KeyguardManager).isKeyguardLocked
+
+                    // Trabalho de consulta e iteração fica fora do main thread.
+                    var foregroundPackage: String? = null
+                    if (screen && unlocked && currentPhase != "reward") {
+                        val now = System.currentTimeMillis()
+                        val events = (getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager)
+                            .queryEvents(ForegroundActivityTracker.queryStart(now), now)
+                        val event = UsageEvents.Event()
+                        while (events.hasNextEvent()) {
+                            events.getNextEvent(event)
+                            when (event.eventType) {
+                                UsageEvents.Event.ACTIVITY_RESUMED -> foreground.resume(
+                                    event.packageName, event.className, event.timeStamp)
+                                UsageEvents.Event.ACTIVITY_PAUSED -> foreground.pause(
+                                    event.packageName, event.className, event.timeStamp)
+                            }
+                        }
+                        foregroundPackage = foreground.packageName
+                    }
+
                     main.post {
                         if (destroyed || token != generation) return@post
                         if (!active) { overlay.hide(); stopSelf(); return@post }
                         try {
                             if (phase != currentPhase) {
                                 phase = currentPhase
-                                promote(phase)
+                                promote(currentPhase, remaining, total)
                             }
-                            val now = System.currentTimeMillis()
-                            val events = (getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager).queryEvents(ForegroundActivityTracker.queryStart(now), now)
-                            val event = UsageEvents.Event()
-                            while (events.hasNextEvent()) {
-                                events.getNextEvent(event)
-                                when (event.eventType) {
-                                    UsageEvents.Event.ACTIVITY_RESUMED -> foreground.resume(
-                                        event.packageName, event.className, event.timeStamp)
-                                    UsageEvents.Event.ACTIVITY_PAUSED -> foreground.pause(
-                                        event.packageName, event.className, event.timeStamp)
-                                }
-                            }
-                            val screen = (getSystemService(POWER_SERVICE) as PowerManager).isInteractive
-                            val unlocked = !(getSystemService(KEYGUARD_SERVICE) as KeyguardManager).isKeyguardLocked
-                            if (currentPhase != "reward" && screen && unlocked && foreground.packageName in selected && foreground.packageName != packageName) overlay.show(balance == 0L)
-                            else overlay.hide()
-                            main.postDelayed(this, 500)
-                        } catch (_: Exception) { failClosedSession("Monitor indisponível. Retome o foco no app.") }
+                            val blocked = currentPhase != "reward" && screen && unlocked &&
+                                foregroundPackage != null && foregroundPackage in selected &&
+                                foregroundPackage != packageName
+                            if (blocked) overlay.show(balance == 0L, detail) else overlay.hide()
+                            // Com a tela desligada não há mudança visual a detectar.
+                            main.postDelayed(this, if (screen) 500L else 2000L)
+                        } catch (_: Exception) {
+                            failClosedSession("Monitor indisponível. Retome o foco no app.")
+                        }
                     }
-                } catch (_: Exception) { main.post { if (!destroyed) failClosedSession("Falha ao salvar a sessão. Retome pelo app.") } }
+                } catch (_: Exception) {
+                    main.post { if (!destroyed) failClosedSession("Falha ao salvar a sessão. Retome pelo app.") }
+                }
             }
         }
     }
+
+    private fun detail(p: SessionProgress): String {
+        val s = p.session
+        return when (s.phase) {
+            "focus" -> "Faltam ${SessionEngine.label(s.focusRemainingSeconds)}. Recompensa ao concluir: ${SessionEngine.label(s.focusTotalSeconds / 5)}."
+            "reward" -> "Recompensa ativa: ${SessionEngine.label(s.rewardRemainingSeconds)} restantes."
+            "locked" -> if (p.rewardSeconds > 0)
+                "Saldo: ${SessionEngine.label(p.rewardSeconds)}. Libere as redes no FocusFeed ou inicie um foco."
+            else
+                "Saldo: 0 min. Conclua um foco para liberar as redes."
+            else -> ""
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         running = true
@@ -76,8 +109,8 @@ class FocusBlockingService : Service() {
         // Must promote promptly, before asynchronous disk work.
         promote("focus")
     }
-    private fun promote(phase: String) {
-        val notification = FocusNotifications.ongoing(this, phase)
+    private fun promote(phase: String, remaining: Long = 0, total: Long = 0) {
+        val notification = FocusNotifications.ongoing(this, phase, remaining, total)
         if (Build.VERSION.SDK_INT >= 34) startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
         else startForeground(1, notification)
     }

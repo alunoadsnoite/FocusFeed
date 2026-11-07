@@ -8,6 +8,7 @@ import android.hardware.display.DisplayManager
 import android.view.Display
 import android.os.Build
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
@@ -25,9 +26,18 @@ class BlockingOverlay(private val context: Context) {
     } else context
     private val manager = viewContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     private var view: LinearLayout? = null
+    private var detailView: TextView? = null
 
-    fun show(noBalance: Boolean) {
-        if (view != null) return
+    fun show(noBalance: Boolean, detail: String = "") {
+        val message = detail.ifEmpty {
+            if (noBalance) "Saldo: 0 min. Conclua uma sessão de foco para ganhar recompensa." else ""
+        }
+        if (view != null) {
+            detailView?.text = message
+            detailView?.visibility = if (message.isEmpty()) View.GONE else View.VISIBLE
+            view?.contentDescription = "Bloqueio do FocusFeed. $message"
+            return
+        }
         val layout = LinearLayout(viewContext).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
@@ -40,14 +50,18 @@ class BlockingOverlay(private val context: Context) {
             gravity = Gravity.CENTER
             setTextColor(Color.WHITE)
         }, LinearLayout.LayoutParams(-1, -2))
-        if (noBalance) layout.addView(TextView(viewContext).apply {
-            text = "Saldo: 0 min. Conclua uma sessão de foco para ganhar recompensa."
+        val detailText = TextView(viewContext).apply {
+            text = message
             textSize = 16f
             gravity = Gravity.CENTER
             setTextColor(Color.WHITE)
-        }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 24 })
+            visibility = if (message.isEmpty()) View.GONE else View.VISIBLE
+        }
+        layout.addView(detailText, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 24 })
+        detailView = detailText
         layout.addView(Button(viewContext).apply {
             text = "Voltar ao FocusFeed"
+            contentDescription = "Voltar ao FocusFeed"
             setOnClickListener {
                 // Launch from the user's explicit tap, never automatically.
                 try {
@@ -60,6 +74,7 @@ class BlockingOverlay(private val context: Context) {
                 }
             }
         }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 32 })
+        layout.contentDescription = "Bloqueio do FocusFeed. $message"
         val params = WindowManager.LayoutParams(-1, -1, type,
             WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT)
@@ -72,6 +87,7 @@ class BlockingOverlay(private val context: Context) {
     fun hide() {
         val current = view ?: return
         view = null
+        detailView = null
         visible = false
         try { manager.removeViewImmediate(current) } catch (_: IllegalArgumentException) { }
     }

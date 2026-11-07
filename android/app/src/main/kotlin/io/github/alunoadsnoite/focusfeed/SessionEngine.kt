@@ -30,6 +30,13 @@ data class SessionProgress(
 )
 
 object SessionEngine {
+    /**
+     * Mantém apenas os IDs recentes. A fase idle já impede crédito duplo; o
+     * conjunto existe para um replay concorrente da mesma conclusão e não pode
+     * crescer indefinidamente no snapshot.
+     */
+    private const val MAX_CREDITED_IDS = 32
+
     fun active(s: FocusSession) = s.phase in setOf("focus", "reward", "locked")
     fun secondsLeft(end: Long, now: Long) = ((end - now + 999) / 1000).coerceAtLeast(0)
 
@@ -71,6 +78,9 @@ object SessionEngine {
             s.focusRemainingSeconds = secondsLeft(s.deadlineElapsed, elapsed)
             if (s.focusRemainingSeconds == 0L) {
                 if (p.credited.add(s.id)) {
+                    while (p.credited.size > MAX_CREDITED_IDS) {
+                        p.credited.remove(p.credited.first())
+                    }
                     val earned = s.focusTotalSeconds / 5
                     p.rewardSeconds += earned
                     val day = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date(s.deadlineWall))

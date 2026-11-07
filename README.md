@@ -36,7 +36,24 @@ Saldo zero desabilita a recompensa e nunca libera apps por si só. A sobreposiç
 continua durante foco/bloqueio ativo e explica como ganhar saldo. Fora de um
 foco/bloqueio ativo, não se impõe um bloqueio permanente só por ter saldo zero.
 Pausar interrompe o foco e o bloqueio, preservando o restante. Parar cancela ambos,
-sem crédito ou devolução de uma recompensa já usada. Há uma ação Parar na notificação.
+sem crédito ou devolução de uma recompensa já usada. Há ações Pausar e Parar na
+notificação Android.
+
+## Histórico, aparência e contato
+
+A aba **Histórico** lê o mesmo estado nativo e mostra o total de hoje, a
+sequência de dias, o acumulado, os últimos 14 dias em barras e o detalhe por
+data. Nenhum dado sai do aparelho.
+
+A aba **Ajustes** permite escolher tema **Claro**, **Escuro** ou **Automático**.
+A preferência é salva nas opções nativas do app (SharedPreferences no Android e
+UserDefaults no iOS) e restaurada ao abrir. A mesma aba traz o contato do
+desenvolvedor, Valdenor Tavares, em `valdenor.sa@proton.me`, com botão para
+copiar o endereço.
+
+Para economizar bateria, a tela consulta o estado nativo a cada 1 s durante
+foco/recompensa, a cada 10 s ociosa e a cada 30 s em segundo plano. O serviço
+Android também deixa de consultar eventos de uso com a tela desligada.
 
 ## Estado, persistência e recuperação
 
@@ -124,8 +141,8 @@ flutter build apk --release
 A chave e suas senhas ficam em `.private/` ignorado pelo Git. Faça um backup privado;
 a mesma chave é necessária para atualizar instalações distribuídas diretamente.
 Para build sem assinatura destinado ao F-Droid: `FOCUSFEED_UNSIGNED=1 flutter build apk --release`.
-O pacote Android é `io.github.alunoadsnoite.focusfeed`, versão 1.0.2, número base 402.
-A submissão usa a tag `v1.0.2` e códigos por arquitetura 4021/4022/4023.
+O pacote Android é `io.github.alunoadsnoite.focusfeed`, versão 1.0.3, número base 403.
+A submissão usa a tag `v1.0.3` e códigos por arquitetura 4031/4032/4033.
 F-Droid constrói/assina sua própria versão após revisão; submissão não é aprovação.
 Metadados Fastlane estão em `fastlane/metadata/android` e a proposta de receita em
 `fdroid/`. O status da publicação e a evidência de testes ficam em [docs/REVIEW.md](docs/REVIEW.md)
