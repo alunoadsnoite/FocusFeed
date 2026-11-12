@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'focus_strings.dart';
+
 /// Preferência de tema persistida no armazenamento nativo.
 enum AppThemeMode {
   system('Automático', ThemeMode.system),
@@ -21,6 +23,8 @@ enum AppThemeMode {
 abstract class SettingsPlatform {
   Future<String?> loadTheme();
   Future<void> saveTheme(String value);
+  Future<String?> loadLanguage();
+  Future<void> saveLanguage(String value);
 }
 
 class NativeSettingsPlatform implements SettingsPlatform {
@@ -32,6 +36,14 @@ class NativeSettingsPlatform implements SettingsPlatform {
   @override
   Future<void> saveTheme(String value) =>
       channel.invokeMethod<void>('saveTheme', {'value': value});
+
+  @override
+  Future<String?> loadLanguage() =>
+      channel.invokeMethod<String>('loadLanguage');
+
+  @override
+  Future<void> saveLanguage(String value) =>
+      channel.invokeMethod<void>('saveLanguage', {'value': value});
 }
 
 class SettingsController extends ChangeNotifier {
@@ -40,11 +52,16 @@ class SettingsController extends ChangeNotifier {
 
   final SettingsPlatform _platform;
   AppThemeMode _mode = AppThemeMode.system;
+  AppLanguage _language = AppLanguage.portuguese;
   bool _disposed = false;
+  bool _languageChosen = false;
 
   AppThemeMode get mode => _mode;
+  AppLanguage get language => _language;
 
-  Future<void> load() async {
+  Future<void> load() => Future.wait([_loadTheme(), _loadLanguage()]);
+
+  Future<void> _loadTheme() async {
     try {
       final value = await _platform.loadTheme();
       if (_disposed || value == null) return;
@@ -52,6 +69,30 @@ class SettingsController extends ChangeNotifier {
       notifyListeners();
     } catch (_) {
       // Sem canal nativo (testes ou plataforma sem suporte): mantém o padrão.
+    }
+  }
+
+  Future<void> _loadLanguage() async {
+    try {
+      final value = await _platform.loadLanguage();
+      if (_disposed || _languageChosen) return;
+      _language = AppLanguage.parse(value);
+      notifyListeners();
+    } catch (_) {
+      // Keep Brazilian Portuguese if the native preference cannot be read.
+    }
+  }
+
+  Future<void> setLanguage(AppLanguage language) async {
+    _languageChosen = true;
+    if (language != _language) {
+      _language = language;
+      notifyListeners();
+    }
+    try {
+      await _platform.saveLanguage(language.tag);
+    } catch (_) {
+      // The selection is still valid for the current run.
     }
   }
 
@@ -81,35 +122,55 @@ class SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final strings = context.strings;
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) => ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          Text('Aparência', style: theme.textTheme.titleMedium),
+          Text(strings.text('Idioma'), style: theme.textTheme.titleMedium),
+          RadioGroup<AppLanguage>(
+            groupValue: controller.language,
+            onChanged: (value) {
+              if (value != null) controller.setLanguage(value);
+            },
+            child: Column(
+              children: [
+                for (final language in AppLanguage.values)
+                  RadioListTile<AppLanguage>(
+                    value: language,
+                    title: Text(language.label),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(strings.text('Aparência'), style: theme.textTheme.titleMedium),
           const SizedBox(height: 8),
-          const Text(
-            'Escolha o tema do aplicativo. O modo automático acompanha o sistema.',
+          Text(
+            strings.text(
+              'Escolha o tema do aplicativo. O modo automático acompanha o sistema.',
+            ),
           ),
           const SizedBox(height: 12),
           SegmentedButton<AppThemeMode>(
             key: const Key('themeMode'),
             showSelectedIcon: false,
-            segments: const [
+            segments: [
               ButtonSegment(
                 value: AppThemeMode.light,
-                icon: Icon(Icons.light_mode_outlined),
-                label: Text('Claro'),
+                icon: const Icon(Icons.light_mode_outlined),
+                label: Text(strings.text('Claro')),
               ),
               ButtonSegment(
                 value: AppThemeMode.dark,
-                icon: Icon(Icons.dark_mode_outlined),
-                label: Text('Escuro'),
+                icon: const Icon(Icons.dark_mode_outlined),
+                label: Text(strings.text('Escuro')),
               ),
               ButtonSegment(
                 value: AppThemeMode.system,
-                icon: Icon(Icons.brightness_auto_outlined),
-                label: Text('Auto'),
+                icon: const Icon(Icons.brightness_auto_outlined),
+                label: Text(strings.text('Auto')),
               ),
             ],
             selected: {controller.mode},
@@ -117,7 +178,10 @@ class SettingsView extends StatelessWidget {
                 controller.setMode(selection.first),
           ),
           const SizedBox(height: 24),
-          Text('Desenvolvedor', style: theme.textTheme.titleMedium),
+          Text(
+            strings.text('Desenvolvedor'),
+            style: theme.textTheme.titleMedium,
+          ),
           const SizedBox(height: 8),
           Card(
             child: Padding(
@@ -136,28 +200,29 @@ class SettingsView extends StatelessWidget {
                       );
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('E-mail copiado.')),
+                          SnackBar(
+                            content: Text(strings.text('E-mail copiado.')),
+                          ),
                         );
                       }
                     },
                     icon: const Icon(Icons.copy),
-                    label: const Text('Copiar e-mail'),
+                    label: Text(strings.text('Copiar e-mail')),
                   ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 24),
-          Text('Sobre', style: theme.textTheme.titleMedium),
+          Text(strings.text('Sobre'), style: theme.textTheme.titleMedium),
           const SizedBox(height: 8),
-          const Card(
+          Card(
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Text(
-                'FocusFeed é um Pomodoro offline com bloqueio de apps e '
-                'recompensa proporcional. Não há conta, anúncios, analytics '
-                'nem conexão de rede em tempo de execução. Todo o progresso '
-                'fica no aparelho.',
+                strings.text(
+                  'FocusFeed é um Pomodoro offline com bloqueio de apps e recompensa proporcional. Não há conta, anúncios, analytics nem conexão de rede em tempo de execução. Todo o progresso fica no aparelho.',
+                ),
               ),
             ),
           ),

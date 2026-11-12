@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'focus_strings.dart';
+
 class PermissionStatus {
   const PermissionStatus({required this.supported, required this.grants});
   final bool supported;
@@ -125,60 +127,65 @@ class _PermissionsPanelState extends State<PermissionsPanel>
   }
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _status?.ready == true
-                ? 'Permissões concedidas'
-                : 'Permissões para bloqueio',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const Text(
-            'Autorize o monitoramento e bloqueio dos apps escolhidos. Notificações são opcionais.',
-          ),
-          if (_status != null && !_status!.supported)
-            const Text('Disponível em Android e iOS 16 ou superior.'),
-          if (_status == null && _error == null)
-            const LinearProgressIndicator(),
-          if (_status?.supported == true)
-            for (final entry in _status!.grants.entries)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${_labels[entry.key]}: ${entry.value ? "ativado" : "pendente"}',
-                    ),
-                    if (!entry.value) ...[
-                      Text(_explanations[entry.key]!),
-                      OutlinedButton(
-                        onPressed: _busy ? null : () => _request(entry.key),
-                        child: Text(
-                          entry.key == 'screenTime'
-                              ? 'Autorizar Screen Time'
-                              : 'Abrir Configurações',
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-          if (_error != null)
+  Widget build(BuildContext context) {
+    final strings = context.strings;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Text(
-              _error!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              _status?.ready == true
+                  ? strings.text('Permissões concedidas')
+                  : strings.text('Permissões para bloqueio'),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-          TextButton(
-            onPressed: _busy ? null : _refresh,
-            child: const Text('Verificar permissões'),
-          ),
-        ],
+            Text(
+              strings.text(
+                'Autorize o monitoramento e bloqueio dos apps escolhidos. Notificações são opcionais.',
+              ),
+            ),
+            if (_status != null && !_status!.supported)
+              Text(strings.text('Disponível em Android e iOS 16 ou superior.')),
+            if (_status == null && _error == null)
+              const LinearProgressIndicator(),
+            if (_status?.supported == true)
+              for (final entry in _status!.grants.entries)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${strings.text(_labels[entry.key]!)}: ${strings.text(entry.value ? "ativado" : "pendente")}',
+                      ),
+                      if (!entry.value) ...[
+                        Text(strings.text(_explanations[entry.key]!)),
+                        OutlinedButton(
+                          onPressed: _busy ? null : () => _request(entry.key),
+                          child: Text(
+                            entry.key == 'screenTime'
+                                ? strings.text('Autorizar Screen Time')
+                                : strings.text('Abrir Configurações'),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+            if (_error != null)
+              Text(
+                strings.text(_error!),
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            TextButton(
+              onPressed: _busy ? null : _refresh,
+              child: Text(strings.text('Verificar permissões')),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

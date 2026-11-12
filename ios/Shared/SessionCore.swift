@@ -31,6 +31,19 @@ struct FocusProgress: Codable {
 /// Shared by Runner and extensions. An App Group lock prevents duplicate credits.
 enum SessionCore {
   static let group = "group.io.github.alunoadsnoite.focusfeed"
+  static var languageDefaults: UserDefaults {
+    UserDefaults(suiteName: group) ?? .standard
+  }
+  static var languageTag: String {
+    languageDefaults.string(forKey: "focusfeed_language") ?? "pt-BR"
+  }
+  static func localized(_ portuguese: String, _ english: String, _ spanish: String) -> String {
+    switch languageTag {
+    case "en-US": return english
+    case "es-ES": return spanish
+    default: return portuguese
+    }
+  }
   static let store = ManagedSettingsStore(named: ManagedSettingsStore.Name("focusfeed"))
   static var elapsed: Int64 {
     var info = mach_timebase_info_data_t()
@@ -182,7 +195,19 @@ enum SessionCore {
       let events = p.events; p.events = []; return events
     }
     for event in events {
-      let content = UNMutableNotificationContent(); content.title = event.title; content.body = event.message; content.sound = .default
+      let content = UNMutableNotificationContent()
+      content.title = event.title
+      content.body = event.message
+      content.sound = .default
+      let rewardPrefix = "Foco concluído! Você ganhou "
+      if event.id.hasPrefix("reward-") {
+        content.title = localized("Pausa encerrada", "Break ended", "Pausa terminada")
+        content.body = localized("Seu tempo de pausa acabou!", "Your break is over!", "¡Terminó tu pausa!")
+      } else if event.id.hasPrefix("focus-"), event.message.hasPrefix(rewardPrefix) {
+        let duration = event.message.dropFirst(rewardPrefix.count)
+        content.title = localized("Foco concluído!", "Focus complete!", "¡Enfoque completado!")
+        content.body = localized(event.message, "Focus complete! You earned \(duration).", "¡Enfoque completado! Ganaste \(duration).")
+      }
       UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: event.id, content: content, trigger: nil))
     }
   }

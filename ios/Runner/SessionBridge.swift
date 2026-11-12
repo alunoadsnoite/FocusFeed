@@ -11,12 +11,13 @@ private struct AppSelectionView: View {
   var body: some View {
     NavigationStack {
       FamilyActivityPicker(selection: $selection)
-        .navigationTitle("Apps para bloquear")
+        .navigationTitle(SessionCore.localized("Apps para bloquear", "Apps to block", "Apps para bloquear"))
         .toolbar {
-          ToolbarItem(placement: .cancellationAction) { Button("Cancelar") { done(nil) } }
-          ToolbarItem(placement: .confirmationAction) { Button("Salvar") { done(selection) } }
+          ToolbarItem(placement: .cancellationAction) { Button(SessionCore.localized("Cancelar", "Cancel", "Cancelar")) { done(nil) } }
+          ToolbarItem(placement: .confirmationAction) { Button(SessionCore.localized("Salvar", "Save", "Guardar")) { done(selection) } }
         }
     }
+    .environment(\.locale, Locale(identifier: SessionCore.languageTag))
   }
 }
 final class SessionBridge {

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="block_heading">Estás en una sesión de enfoque. Mantén la concentración.</string>
+    <string name="block_back">Volver a FocusFeed</string>
+    <string name="block_accessibility">Pantalla de bloqueo de FocusFeed. %1$s</string>
+    <string name="block_empty">Saldo: 0 min. Completa una sesión de enfoque para ganar tiempo.</string>
+    <string name="block_focus">Quedan %1$s. Recompensa al terminar: %2$s.</string>
+    <string name="block_reward">Recompensa activa: quedan %1$s.</string>
+    <string name="block_balance">Saldo: %1$s. Desbloquea las apps en FocusFeed o inicia una sesión de enfoque.</string>
+    <string name="channel_focus">Monitor de enfoque</string>
+    <string name="channel_results">Finalización y recompensas</string>
+    <string name="notification_reward">FocusFeed: recompensa activa</string>
+    <string name="notification_block">FocusFeed: bloqueo activo</string>
+    <string name="notification_open">Toca para volver a FocusFeed.</string>
+    <string name="notification_unblocked">Las apps están desbloqueadas temporalmente.</string>
+    <string name="notification_remaining">Quedan %1$s.</string>
+    <string name="notification_pause">Pausar</string>
+    <string name="notification_stop">Detener</string>
+    <string name="notification_reward_end">Pausa terminada</string>
+    <string name="notification_reward_body">¡Terminó tu pausa!</string>
+    <string name="notification_focus_end">¡Enfoque completado!</string>
+    <string name="notification_focus_body">¡Enfoque completado! Ganaste %1$s.</string>
+    <string name="notification_interrupted">Sesión interrumpida</string>
+    <string name="notification_reboot">El teléfono se reinició. Reanuda el enfoque en FocusFeed. No se ganó tiempo de recompensa mientras estaba apagado.</string>
+</resources>

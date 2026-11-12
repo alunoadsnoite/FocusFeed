@@ -1,0 +1,12 @@
+FocusFeed te ayuda a concentrarte y a ganar pausas al completar sesiones.
+
+Elige las apps que quieres bloquear, inicia un Pomodoro y gana el 20 % del tiempo de enfoque completado. Usa ese saldo para desbloquear las apps temporalmente. El bloqueo se reanuda al terminar la pausa.
+
+• Temporizador configurable con pausa y reanudación.
+• Selección de apps instaladas con iconos y búsqueda.
+• Historial diario, saldo y notificaciones locales.
+• Interfaz en portugués de Brasil, inglés y español.
+
+Sin cuenta, anuncios, analítica ni servidor. Todo el progreso se queda en tu dispositivo.
+
+El bloqueo necesita acceso al uso y permiso para mostrar contenido sobre otras apps. Las notificaciones son opcionales. No hace falta el permiso de accesibilidad. Después de un reinicio, la sesión se restaura en pausa sin añadir saldo por el tiempo de interrupción.

@@ -42,6 +42,16 @@ class MainActivity : FlutterActivity() {
                 val options = getSharedPreferences("focusfeed_options", MODE_PRIVATE)
                 when (call.method) {
                     "loadTheme" -> result.success(options.getString("theme", "system"))
+                    "loadLanguage" -> result.success(options.getString(AppLanguage.KEY, AppLanguage.DEFAULT_TAG))
+                    "saveLanguage" -> {
+                        val value = call.argument<String>("value")
+                        if (value == null || value !in AppLanguage.supported) {
+                            result.error("invalid_language", "Unsupported language.", null)
+                        } else {
+                            options.edit().putString(AppLanguage.KEY, value).apply()
+                            result.success(null)
+                        }
+                    }
                     "saveTheme" -> {
                         val value = call.argument<String>("value")
                         if (value == null || (value != "system" && value != "light" && value != "dark")) {

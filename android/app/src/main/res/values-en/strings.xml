@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="block_heading">You\'re in a focus session. Stay focused.</string>
+    <string name="block_back">Back to FocusFeed</string>
+    <string name="block_accessibility">FocusFeed blocking screen. %1$s</string>
+    <string name="block_empty">Balance: 0 min. Complete a focus session to earn reward time.</string>
+    <string name="block_focus">%1$s remaining. Reward on completion: %2$s.</string>
+    <string name="block_reward">Reward active: %1$s remaining.</string>
+    <string name="block_balance">Balance: %1$s. Unblock apps in FocusFeed or start a focus session.</string>
+    <string name="channel_focus">Focus monitor</string>
+    <string name="channel_results">Completion and rewards</string>
+    <string name="notification_reward">FocusFeed: reward active</string>
+    <string name="notification_block">FocusFeed: blocking active</string>
+    <string name="notification_open">Tap to return to FocusFeed.</string>
+    <string name="notification_unblocked">Apps are temporarily unblocked.</string>
+    <string name="notification_remaining">%1$s remaining.</string>
+    <string name="notification_pause">Pause</string>
+    <string name="notification_stop">Stop</string>
+    <string name="notification_reward_end">Break ended</string>
+    <string name="notification_reward_body">Your break is over!</string>
+    <string name="notification_focus_end">Focus complete!</string>
+    <string name="notification_focus_body">Focus complete! You earned %1$s.</string>
+    <string name="notification_interrupted">Session interrupted</string>
+    <string name="notification_reboot">Phone restarted. Resume focus in FocusFeed. No reward time was earned while the phone was off.</string>
+</resources>

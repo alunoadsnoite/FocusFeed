@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="block_heading">Você está em momento de foco! Mantenha a concentração.</string>
+    <string name="block_back">Voltar ao FocusFeed</string>
+    <string name="block_accessibility">Bloqueio do FocusFeed. %1$s</string>
+    <string name="block_empty">Saldo: 0 min. Conclua uma sessão de foco para ganhar recompensa.</string>
+    <string name="block_focus">Faltam %1$s. Recompensa ao concluir: %2$s.</string>
+    <string name="block_reward">Recompensa ativa: %1$s restantes.</string>
+    <string name="block_balance">Saldo: %1$s. Libere as redes no FocusFeed ou inicie um foco.</string>
+    <string name="channel_focus">Monitor de foco</string>
+    <string name="channel_results">Conclusão e recompensa</string>
+    <string name="notification_reward">FocusFeed: recompensa ativa</string>
+    <string name="notification_block">FocusFeed: bloqueio ativo</string>
+    <string name="notification_open">Toque para voltar ao FocusFeed.</string>
+    <string name="notification_unblocked">Redes liberadas temporariamente.</string>
+    <string name="notification_remaining">Faltam %1$s.</string>
+    <string name="notification_pause">Pausar</string>
+    <string name="notification_stop">Parar</string>
+    <string name="notification_reward_end">Pausa encerrada</string>
+    <string name="notification_reward_body">Seu tempo de pausa acabou!</string>
+    <string name="notification_focus_end">Foco concluído!</string>
+    <string name="notification_focus_body">Foco concluído! Você ganhou %1$s.</string>
+    <string name="notification_interrupted">Sessão interrompida</string>
+    <string name="notification_reboot">Celular reiniciado. Retome o foco pausado no FocusFeed; nenhum crédito foi gerado enquanto estava desligado.</string>
+</resources>

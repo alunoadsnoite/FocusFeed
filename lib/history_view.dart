@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'day_key.dart';
+import 'focus_strings.dart';
 import 'rewards.dart';
 import 'session_controller.dart';
 
@@ -14,9 +15,6 @@ class HistoryView extends StatelessWidget {
   static const _days = 14;
 
   DateTime _day(DateTime date) => DateTime(date.year, date.month, date.day);
-
-  String _short(DateTime date) =>
-      '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}';
 
   int _streak(Map<String, int> history, DateTime today) {
     var cursor = today;
@@ -34,10 +32,14 @@ class HistoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final strings = context.strings;
+    final material = MaterialLocalizations.of(context);
+    String short(DateTime date) => material.formatShortMonthDay(date);
     final today = _day(now);
     final days = List.generate(
       _days,
-      (index) => DateTime(today.year, today.month, today.day - (_days - 1 - index)),
+      (index) =>
+          DateTime(today.year, today.month, today.day - (_days - 1 - index)),
     );
     final values = days
         .map((day) => state.history[localDayKey(day)] ?? 0)
@@ -51,28 +53,46 @@ class HistoryView extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        Text('Seu progresso', style: theme.textTheme.headlineSmall),
+        Text(
+          strings.text('Seu progresso'),
+          style: theme.textTheme.headlineSmall,
+        ),
         const SizedBox(height: 12),
         Wrap(
           spacing: 12,
           runSpacing: 12,
           children: [
-            _Stat(label: 'Hoje', value: rewardLabel(todayTotal)),
-            _Stat(label: 'Últimos $_days dias', value: rewardLabel(periodTotal)),
-            _Stat(label: 'Sequência', value: '$streak ${streak == 1 ? 'dia' : 'dias'}'),
-            _Stat(label: 'Total', value: rewardLabel(allTimeTotal)),
+            _Stat(label: strings.text('Hoje'), value: rewardLabel(todayTotal)),
+            _Stat(
+              label: strings.text('Últimos {0} dias', [_days]),
+              value: rewardLabel(periodTotal),
+            ),
+            _Stat(
+              label: strings.text('Sequência'),
+              value: strings.text(streak == 1 ? '{0} dia' : '{0} dias', [
+                streak,
+              ]),
+            ),
+            _Stat(
+              label: strings.text('Total'),
+              value: rewardLabel(allTimeTotal),
+            ),
           ],
         ),
         const SizedBox(height: 24),
-        Text('Últimos $_days dias', style: theme.textTheme.titleMedium),
+        Text(
+          strings.text('Últimos {0} dias', [_days]),
+          style: theme.textTheme.titleMedium,
+        ),
         const SizedBox(height: 12),
         if (maxValue == 0)
-          const Card(
+          Card(
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Text(
-                'Ainda não há focos concluídos. Termine uma sessão para '
-                'começar seu histórico.',
+                strings.text(
+                  'Ainda não há focos concluídos. Termine uma sessão para começar seu histórico.',
+                ),
               ),
             ),
           )
@@ -90,17 +110,21 @@ class HistoryView extends StatelessWidget {
                         for (var index = 0; index < days.length; index++)
                           Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 2,
+                              ),
                               child: Tooltip(
                                 message:
-                                    '${_short(days[index])}: ${rewardLabel(values[index])}',
+                                    '${short(days[index])}: ${rewardLabel(values[index])}',
                                 child: Container(
                                   height: maxValue == 0
                                       ? 2
                                       : 4 + (values[index] / maxValue) * 116,
                                   decoration: BoxDecoration(
                                     color: values[index] == 0
-                                        ? theme.colorScheme.surfaceContainerHighest
+                                        ? theme
+                                              .colorScheme
+                                              .surfaceContainerHighest
                                         : theme.colorScheme.primary,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
@@ -115,8 +139,11 @@ class HistoryView extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(_short(days.first), style: theme.textTheme.labelSmall),
-                      Text(_short(days.last), style: theme.textTheme.labelSmall),
+                      Text(
+                        short(days.first),
+                        style: theme.textTheme.labelSmall,
+                      ),
+                      Text(short(days.last), style: theme.textTheme.labelSmall),
                     ],
                   ),
                 ],
@@ -124,16 +151,16 @@ class HistoryView extends StatelessWidget {
             ),
           ),
         const SizedBox(height: 24),
-        Text('Detalhes', style: theme.textTheme.titleMedium),
+        Text(strings.text('Detalhes'), style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
         ...days.reversed.map(
           (day) => ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.event_available_outlined),
-            title: Text(_short(day)),
+            title: Text(short(day)),
             trailing: Text(
               (state.history[localDayKey(day)] ?? 0) == 0
-                  ? 'Sem foco'
+                  ? strings.text('Sem foco')
                   : rewardLabel(state.history[localDayKey(day)]!),
             ),
           ),
