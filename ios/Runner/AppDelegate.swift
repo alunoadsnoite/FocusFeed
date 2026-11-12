@@ -55,6 +55,16 @@ import UserNotifications
     settings.setMethodCallHandler { call, result in
       let defaults = UserDefaults.standard
       switch call.method {
+      case "loadLanguage":
+        result(SessionCore.languageTag)
+      case "saveLanguage":
+        let value = (call.arguments as? [String: Any])?["value"] as? String
+        guard let value, ["pt-BR", "en-US", "es-ES"].contains(value) else {
+          result(FlutterError(code: "invalid_language", message: "Unsupported language.", details: nil))
+          return
+        }
+        SessionCore.languageDefaults.set(value, forKey: "focusfeed_language")
+        result(nil)
       case "loadTheme":
         result(defaults.string(forKey: "focusfeed_theme") ?? "system")
       case "saveTheme":

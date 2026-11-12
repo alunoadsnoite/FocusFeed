@@ -39,11 +39,15 @@ Pausar interrompe o foco e o bloqueio, preservando o restante. Parar cancela amb
 sem crédito ou devolução de uma recompensa já usada. Há ações Pausar e Parar na
 notificação Android.
 
-## Histórico, aparência e contato
+## Histórico, idiomas, aparência e contato
 
 A aba **Histórico** lê o mesmo estado nativo e mostra o total de hoje, a
 sequência de dias, o acumulado, os últimos 14 dias em barras e o detalhe por
 data. Nenhum dado sai do aparelho.
+
+Em **Ajustes → Idioma**, escolha **Português (Brasil)**, **English** ou **Español**.
+A escolha fica salva no aparelho e também se aplica às mensagens de bloqueio e
+notificações do FocusFeed. O histórico, o saldo e a seleção de apps são preservados.
 
 A aba **Ajustes** permite escolher tema **Claro**, **Escuro** ou **Automático**.
 A preferência é salva nas opções nativas do app (SharedPreferences no Android e
@@ -141,10 +145,11 @@ flutter build apk --release
 A chave e suas senhas ficam em `.private/` ignorado pelo Git. Faça um backup privado;
 a mesma chave é necessária para atualizar instalações distribuídas diretamente.
 Para build sem assinatura destinado ao F-Droid: `FOCUSFEED_UNSIGNED=1 flutter build apk --release`.
-O pacote Android é `io.github.alunoadsnoite.focusfeed`, versão 1.0.3, número base 403.
-A submissão usa a tag `v1.0.3` e códigos por arquitetura 4031/4032/4033.
-F-Droid constrói/assina sua própria versão após revisão; submissão não é aprovação.
-Metadados Fastlane estão em `fastlane/metadata/android` e a proposta de receita em
-`fdroid/`. O status da publicação e a evidência de testes ficam em [docs/REVIEW.md](docs/REVIEW.md)
-e [docs/VALIDATION.md](docs/VALIDATION.md). A [MR !52413](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52413)
-registra CI aprovado; revisão funcional independente e aprovação continuam pendentes.
+O pacote Android é `io.github.alunoadsnoite.focusfeed`. A versão **1.0.4** usa o
+número base 404 e os códigos 4041, 4042 e 4043 no F-Droid. Esta versão adiciona
+inglês e espanhol à interface, ao bloqueio e às notificações.
+
+O F-Droid compila e assina os APKs a partir da tag `v1.0.4`. Acompanhe a
+disponibilidade no [catálogo do F-Droid](https://f-droid.org/packages/io.github.alunoadsnoite.focusfeed/).
+Os metadados Fastlane ficam em `fastlane/metadata/android`. O histórico de
+validação está em [docs/VALIDATION.md](docs/VALIDATION.md).

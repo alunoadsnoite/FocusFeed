@@ -20,6 +20,7 @@ class FocusBlockingService : Service() {
     private lateinit var overlay: BlockingOverlay
     private val foreground = ForegroundActivityTracker()
     private var phase = ""
+    private var notificationLanguage = ""
     private var destroyed = false
     private var generation = 0
 
@@ -41,7 +42,6 @@ class FocusBlockingService : Service() {
                     val balance = p.rewardSeconds
                     val remaining = if (currentPhase == "focus") p.session.focusRemainingSeconds else p.session.rewardRemainingSeconds
                     val total = if (currentPhase == "focus") p.session.focusTotalSeconds else 0L
-                    val detail = detail(p)
                     val screen = (getSystemService(POWER_SERVICE) as PowerManager).isInteractive
                     val unlocked = !(getSystemService(KEYGUARD_SERVICE) as KeyguardManager).isKeyguardLocked
 
@@ -68,14 +68,16 @@ class FocusBlockingService : Service() {
                         if (destroyed || token != generation) return@post
                         if (!active) { overlay.hide(); stopSelf(); return@post }
                         try {
-                            if (phase != currentPhase) {
+                            val language = AppLanguage.tag(this@FocusBlockingService)
+                            if (phase != currentPhase || notificationLanguage != language) {
                                 phase = currentPhase
+                                notificationLanguage = language
                                 promote(currentPhase, remaining, total)
                             }
                             val blocked = currentPhase != "reward" && screen && unlocked &&
                                 foregroundPackage != null && foregroundPackage in selected &&
                                 foregroundPackage != packageName
-                            if (blocked) overlay.show(balance == 0L, detail) else overlay.hide()
+                            if (blocked) overlay.show(balance == 0L, detail(p)) else overlay.hide()
                             // Com a tela desligada não há mudança visual a detectar.
                             main.postDelayed(this, if (screen) 500L else 2000L)
                         } catch (_: Exception) {
@@ -91,13 +93,14 @@ class FocusBlockingService : Service() {
 
     private fun detail(p: SessionProgress): String {
         val s = p.session
+        val text = AppLanguage.resources(this)
         return when (s.phase) {
-            "focus" -> "Faltam ${SessionEngine.label(s.focusRemainingSeconds)}. Recompensa ao concluir: ${SessionEngine.label(s.focusTotalSeconds / 5)}."
-            "reward" -> "Recompensa ativa: ${SessionEngine.label(s.rewardRemainingSeconds)} restantes."
+            "focus" -> text.getString(R.string.block_focus, SessionEngine.label(s.focusRemainingSeconds), SessionEngine.label(s.focusTotalSeconds / 5))
+            "reward" -> text.getString(R.string.block_reward, SessionEngine.label(s.rewardRemainingSeconds))
             "locked" -> if (p.rewardSeconds > 0)
-                "Saldo: ${SessionEngine.label(p.rewardSeconds)}. Libere as redes no FocusFeed ou inicie um foco."
+                text.getString(R.string.block_balance, SessionEngine.label(p.rewardSeconds))
             else
-                "Saldo: 0 min. Conclua um foco para liberar as redes."
+                text.getString(R.string.block_empty)
             else -> ""
         }
     }

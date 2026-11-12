@@ -27,15 +27,21 @@ class BlockingOverlay(private val context: Context) {
     private val manager = viewContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     private var view: LinearLayout? = null
     private var detailView: TextView? = null
+    private var headingView: TextView? = null
+    private var backButton: Button? = null
 
     fun show(noBalance: Boolean, detail: String = "") {
+        val strings = AppLanguage.resources(context)
         val message = detail.ifEmpty {
-            if (noBalance) "Saldo: 0 min. Conclua uma sessão de foco para ganhar recompensa." else ""
+            if (noBalance) strings.getString(R.string.block_empty) else ""
         }
         if (view != null) {
+            headingView?.text = strings.getString(R.string.block_heading)
+            backButton?.text = strings.getString(R.string.block_back)
+            backButton?.contentDescription = strings.getString(R.string.block_back)
             detailView?.text = message
             detailView?.visibility = if (message.isEmpty()) View.GONE else View.VISIBLE
-            view?.contentDescription = "Bloqueio do FocusFeed. $message"
+            view?.contentDescription = strings.getString(R.string.block_accessibility, message)
             return
         }
         val layout = LinearLayout(viewContext).apply {
@@ -44,14 +50,16 @@ class BlockingOverlay(private val context: Context) {
             setPadding(32, 64, 32, 64)
             setBackgroundColor(Color.rgb(12, 46, 44))
         }
-        layout.addView(TextView(viewContext).apply {
-            text = "Você está em momento de foco! Mantenha a concentração."
+        val heading = TextView(viewContext).apply {
+            this.text = strings.getString(R.string.block_heading)
             textSize = 26f
             gravity = Gravity.CENTER
             setTextColor(Color.WHITE)
-        }, LinearLayout.LayoutParams(-1, -2))
+        }
+        headingView = heading
+        layout.addView(heading, LinearLayout.LayoutParams(-1, -2))
         val detailText = TextView(viewContext).apply {
-            text = message
+            this.text = message
             textSize = 16f
             gravity = Gravity.CENTER
             setTextColor(Color.WHITE)
@@ -59,9 +67,9 @@ class BlockingOverlay(private val context: Context) {
         }
         layout.addView(detailText, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 24 })
         detailView = detailText
-        layout.addView(Button(viewContext).apply {
-            text = "Voltar ao FocusFeed"
-            contentDescription = "Voltar ao FocusFeed"
+        val back = Button(viewContext).apply {
+            this.text = strings.getString(R.string.block_back)
+            contentDescription = strings.getString(R.string.block_back)
             setOnClickListener {
                 // Launch from the user's explicit tap, never automatically.
                 try {
@@ -73,8 +81,10 @@ class BlockingOverlay(private val context: Context) {
                     // Keep the blocker visible if navigation fails.
                 }
             }
-        }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 32 })
-        layout.contentDescription = "Bloqueio do FocusFeed. $message"
+        }
+        backButton = back
+        layout.addView(back, LinearLayout.LayoutParams(-1, -2).apply { topMargin = 32 })
+        layout.contentDescription = strings.getString(R.string.block_accessibility, message)
         val params = WindowManager.LayoutParams(-1, -1, type,
             WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT)
@@ -88,6 +98,8 @@ class BlockingOverlay(private val context: Context) {
         val current = view ?: return
         view = null
         detailView = null
+        headingView = null
+        backButton = null
         visible = false
         try { manager.removeViewImmediate(current) } catch (_: IllegalArgumentException) { }
     }

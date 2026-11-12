@@ -135,6 +135,43 @@ void main() {
     settings.dispose();
     c.dispose();
   });
+  testWidgets('language switches without losing a paused session', (
+    tester,
+  ) async {
+    final native = FakeSessionPlatform();
+    native.progress['session']['phase'] = 'paused';
+    native.progress['session']['focusRemainingSeconds'] = 900;
+    native.progress['notice'] =
+        'Foco concluído. Recompensa adicionada ao saldo.';
+    final platform = _FakeSettingsPlatform();
+    final settings = SettingsController(platform: platform);
+    final controller = SessionController(platform: native, poll: false);
+    await tester.pumpWidget(
+      FocusFeedApp(controller: controller, settings: settings),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ajustes'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('English'));
+    await tester.pumpAndSettle();
+    expect(platform.storedLanguage, 'en-US');
+    expect(find.text('Language'), findsOneWidget);
+    await tester.tap(find.text('Español'));
+    await tester.pumpAndSettle();
+    expect(platform.storedLanguage, 'es-ES');
+    await tester.tap(find.text('Enfoque'));
+    await tester.pumpAndSettle();
+    expect(find.text('15:00'), findsOneWidget);
+    expect(find.text('Reanudar enfoque'), findsOneWidget);
+    expect(
+      find.text('Enfoque completado. La recompensa se añadió al saldo.'),
+      findsOneWidget,
+    );
+    await tester.pumpWidget(const SizedBox());
+    settings.dispose();
+    controller.dispose();
+  });
+
   testWidgets('iOS exposes the native Screen Time picker', (tester) async {
     final native = FakeSessionPlatform()..platform = 'ios';
     final c = SessionController(platform: native, poll: false);
@@ -156,6 +193,14 @@ void main() {
 }
 
 class _FakeSettingsPlatform implements SettingsPlatform {
+  String? storedLanguage;
+
+  @override
+  Future<String?> loadLanguage() async => storedLanguage;
+
+  @override
+  Future<void> saveLanguage(String value) async => storedLanguage = value;
+
   String? stored;
 
   @override

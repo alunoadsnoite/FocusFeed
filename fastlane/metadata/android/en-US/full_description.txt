@@ -15,3 +15,5 @@ No account, advertisements, analytics or backend. All progress stays on your dev
 Usage access and draw-over-other-apps access are needed for blocking. Notification permission is optional. Accessibility access is not required.
 
 After a reboot or interruption, unfinished focus is restored paused without awarding credit for downtime. Android may restrict or stop background monitoring, and certain apps can hide overlays. This is a voluntary focus aid, not an unbreakable parental-control system.
+
+Choose Brazilian Portuguese, English or Spanish in Settings.
