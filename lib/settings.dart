@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'focus_strings.dart';
 
@@ -115,6 +116,47 @@ class SettingsController extends ChangeNotifier {
 }
 
 class SettingsView extends StatelessWidget {
+  Future<void> _copyPixKey(BuildContext context) async {
+    var feedback = context.strings.text('Chave Pix copiada.');
+    final failure = context.strings.text(
+      'Não foi possível copiar a chave Pix.',
+    );
+    try {
+      await Clipboard.setData(
+        const ClipboardData(text: '81063e93-0c1b-4ddb-8a16-b9be68a75d4e'),
+      );
+    } on PlatformException {
+      feedback = failure;
+    } on MissingPluginException {
+      feedback = failure;
+    }
+    if (context.mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(feedback)));
+    }
+  }
+
+  Future<void> _openSponsors(BuildContext context) async {
+    final failure = context.strings.text(
+      'Não foi possível abrir o GitHub Sponsors.',
+    );
+    try {
+      final opened = await launchUrl(
+        Uri.parse('https://github.com/sponsors/alunoadsnoite'),
+        mode: LaunchMode.externalApplication,
+      );
+      if (opened) return;
+    } on PlatformException {
+      // Show the same feedback when no browser is available.
+    } on MissingPluginException {
+      // Some Flutter targets may not register a URL launcher.
+    }
+    if (context.mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(failure)));
+    }
+  }
+
   const SettingsView({super.key, required this.controller});
 
   final SettingsController controller;
@@ -212,6 +254,21 @@ class SettingsView extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            strings.text('Apoie o desenvolvedor'),
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          TextButton.icon(
+            onPressed: () => _copyPixKey(context),
+            icon: const Icon(Icons.copy),
+            label: Text(strings.text('Copiar chave Pix')),
+          ),
+          TextButton.icon(
+            onPressed: () => _openSponsors(context),
+            icon: const Icon(Icons.open_in_new),
+            label: const Text('GitHub Sponsors'),
           ),
           const SizedBox(height: 24),
           Text(strings.text('Sobre'), style: theme.textTheme.titleMedium),
