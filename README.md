@@ -1,5 +1,16 @@
 # FocusFeed
 
+**Organize períodos de foco e pausas com recompensa de tempo.**
+
+`Flutter · Dart · Kotlin`
+
+[Reportar problema](https://github.com/alunoadsnoite/FocusFeed/issues) · [Licença](LICENSE)
+
+## Veja o aplicativo
+
+<img src="fastlane/metadata/android/pt-BR/images/phoneScreenshots/1.png" alt="Tela 1 do FocusFeed" width="240">
+<img src="fastlane/metadata/android/pt-BR/images/phoneScreenshots/2.png" alt="Tela 2 do FocusFeed" width="240">
+
 MVP Flutter de Pomodoro offline com bloqueio de apps, saldo de recompensa de 20%
 e histórico local. Código aberto sob licença MIT. Sem conta, backend, anúncios,
 analytics ou conexão de rede em tempo de execução na versão Android release.
@@ -153,3 +164,7 @@ O F-Droid compila e assina os APKs a partir da tag `v1.0.4`. Acompanhe a
 disponibilidade no [catálogo do F-Droid](https://f-droid.org/packages/io.github.alunoadsnoite.focusfeed/).
 Os metadados Fastlane ficam em `fastlane/metadata/android`. O histórico de
 validação está em [docs/VALIDATION.md](docs/VALIDATION.md).
+
+## Como contribuir
+
+Sugestões, traduções e relatos de problemas são bem-vindos. Abra uma issue com o contexto e o comportamento esperado. Para alterações de código, explique a mudança e os testes realizados no pull request. Use dados fictícios nos exemplos e nas capturas.
