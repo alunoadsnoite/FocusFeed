@@ -64,6 +64,17 @@ class _FocusStringsDelegate extends LocalizationsDelegate<FocusStrings> {
 // Brazilian Portuguese is the source text. Native notices already saved by
 // earlier versions use these same strings, so they can be localized on display.
 const _translations = <String, (String, String)>{
+  'Apoie o desenvolvedor': ('Support the developer', 'Apoya al desarrollador'),
+  'Copiar chave Pix': ('Copy Pix key', 'Copiar clave Pix'),
+  'Chave Pix copiada.': ('Pix key copied.', 'Clave Pix copiada.'),
+  'Não foi possível copiar a chave Pix.': (
+    'Could not copy the Pix key.',
+    'No se pudo copiar la clave Pix.',
+  ),
+  'Não foi possível abrir o GitHub Sponsors.': (
+    'Could not open GitHub Sponsors.',
+    'No se pudo abrir GitHub Sponsors.',
+  ),
   "Histórico": ("History", "Historial"),
   "Ajustes": ("Settings", "Ajustes"),
   "Foco": ("Focus", "Enfoque"),
