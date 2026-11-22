@@ -29,3 +29,32 @@ Os APKs assinados do pipeline são artefatos de teste, não publicação oficial
 Não usar Configurações do Android como alvo de bloqueio: ele pode ocultar
 overlays por segurança. Não desativar proteções do Android para fazer o teste passar.
 Não marcar o problema original como resolvido sem confirmar no aparelho afetado.
+
+## Resultados já disponíveis — 27/10/2026
+
+A descrição da MR registra o ensaio do autor no Samsung SM-X510 / Android 16
+com FocusFeed 1.0.2 ARM64 4022 e APKPure 3.20.81. Duas aberturas bloqueadas,
+app não selecionado, crédito de 12 segundos, resgate pela interface e bloqueio
+após expiração foram registrados como aprovados. Esse resultado não equivale
+a reteste independente no SM-G998B / Android 15.
+
+Na revisão local de 27/10, análise Flutter, 20 testes Flutter e 17 testes JVM
+passaram; o APK debug compilou. Não houve novo teste em aparelho nessa revisão.
+
+## Registro do próximo ensaio
+
+- Modelo e Android:
+- FocusFeed: versão, código, origem e assinatura do APK:
+- APKPure: versão e código:
+- Permissões concedidas e restrições de bateria:
+- Primeira abertura: bloqueou? Latência:
+- Segunda abertura após retornar ao FocusFeed: bloqueou? Latência:
+- App não selecionado permaneceu acessível?
+- Um minuto concluído creditou 12 segundos uma única vez?
+- Resgate pela interface liberou APKPure?
+- Expiração restabeleceu o bloqueio?
+- Monitor continuou ativo? Houve janela ocultada pelo Android?
+- Evidências revisadas sem dados pessoais:
+
+Registrar falhas e resultados inconclusivos como tais. Não considerar aprovação
+em outro modelo ou versão do Android como resolução do relato original.

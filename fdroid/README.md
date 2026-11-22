@@ -12,6 +12,8 @@ O pipeline #2987337391 passou as nove etapas, incluindo as três arquiteturas.
 O relatório tem avisos de sobreposição e informações de permissões/APKs,
 explicados em [docs/REVIEW.md](../docs/REVIEW.md). Isso não confirma publicação.
 
+A MR registra em 27/10/2026 teste do autor no Samsung SM-X510 / Android 16
+com APKPure, resgate e expiração pela interface; veja [validação](../docs/VALIDATION.md).
 Ainda falta reteste independente do bloqueio no Samsung SM-G998B / Android 15,
 incluindo APKPure em duas aberturas, app não selecionado, resgate e expiração.
 A correção de eventos de primeiro plano não estabelece a causa no Samsung.

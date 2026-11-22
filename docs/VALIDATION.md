@@ -1,5 +1,20 @@
 # Validação do MVP
 
+## Atualização consultada — 27/10/2026
+
+A API da MR !52413 confirma submissão aberta, sem conflitos e pipeline
+#2987337391 aprovado. O PR upstream #4 já está integrado. O catálogo para
+`io.github.alunoadsnoite.focusfeed` retornou 404; não se declara publicação.
+
+A descrição da [MR](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52413)
+registra teste do autor em Samsung SM-X510 / Android 16, com FocusFeed 1.0.2
+ARM64 4022 e APKPure 3.20.81: duas aberturas bloqueadas, app não selecionado
+acessível, crédito, resgate e retorno do bloqueio após expiração pela interface.
+É um relato já publicado, não um novo teste físico desta revisão. O APK usava
+certificado de desenvolvimento; não era assinado pelo F-Droid. Esse ensaio
+não substitui o caso original SM-G998B / Android 15 nem a aceitação independente.
+Os trechos datados abaixo preservam o escopo das verificações anteriores.
+
 ## Estado atual do F-Droid — 26/10/2026
 
 A [MR !52413](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52413) está aberta
